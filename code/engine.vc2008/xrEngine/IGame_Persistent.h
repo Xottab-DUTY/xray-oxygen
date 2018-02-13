@@ -53,7 +53,9 @@ public:
 	params							m_game_params;
 public:
 	xr_set<CPS_Instance*>			ps_active;
+    CRITICAL_SECTION                ps_activeGuard;
 	xr_vector<CPS_Instance*>		ps_destroy;
+    CRITICAL_SECTION                ps_destroyGuard;
 	xr_vector<CPS_Instance*>		ps_needtoplay;
 
 public:

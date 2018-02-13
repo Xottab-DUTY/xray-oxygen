@@ -224,12 +224,14 @@ CModelPool::CModelPool()
     bForceDiscard 			= FALSE;
     bAllowChildrenDuplicate	= TRUE; 
 	g_pMotionsContainer		= xr_new<motions_container>();
+    InitializeCriticalSection(&ModelsToDeleteGuard);
 }
 
 CModelPool::~CModelPool()
 {
 	Destroy					();
 	xr_delete				(g_pMotionsContainer);
+    DeleteCriticalSection(&ModelsToDeleteGuard);
 }
 
 dxRender_Visual* CModelPool::Instance_Find(LPCSTR N)
@@ -309,7 +311,6 @@ dxRender_Visual* CModelPool::CreateChild(LPCSTR name, IReader* data)
 extern  BOOL ENGINE_API g_bRendering; 
 void	CModelPool::DeleteInternal	(dxRender_Visual* &V, BOOL bDiscard)
 {
-	VERIFY					(!g_bRendering);
     if (!V)					return;
 	V->Depart				();
 	if (bDiscard||bForceDiscard){
@@ -332,20 +333,20 @@ void	CModelPool::DeleteInternal	(dxRender_Visual* &V, BOOL bDiscard)
 void	CModelPool::Delete		(dxRender_Visual* &V, BOOL bDiscard)
 {
 	if (NULL==V)				return;
-	if (g_bRendering){
-		VERIFY					(!bDiscard);
-		ModelsToDelete.push_back(V);
-	} else {
-		DeleteInternal			(V,bDiscard);
-	}	
+    EnterCriticalSection(&ModelsToDeleteGuard);
+    VERIFY(!bDiscard);
+    ModelsToDelete.push_back(V);
 	V							=	NULL;
+    LeaveCriticalSection(&ModelsToDeleteGuard);
 }
 
 void	CModelPool::DeleteQueue		()
 {
+    EnterCriticalSection(&ModelsToDeleteGuard);
 	for (u32 it=0; it<ModelsToDelete.size(); it++)
 		DeleteInternal(ModelsToDelete[it]);
 	ModelsToDelete.clear			();
+    LeaveCriticalSection(&ModelsToDeleteGuard);
 }
 
 void	CModelPool::Discard	(dxRender_Visual* &V, BOOL b_complete)

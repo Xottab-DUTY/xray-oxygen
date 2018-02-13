@@ -11,27 +11,34 @@ CPS_Instance::CPS_Instance			(bool destroy_on_game_load)	:
 	ISpatial				(g_SpatialSpace),
 	m_destroy_on_game_load	(destroy_on_game_load)
 {
-	g_pGamePersistent->ps_active.insert		(this);
 	renderable.pROS_Allowed					= FALSE;
 
 	m_iLifeTime								= int_max;
 	m_bAutoRemove							= TRUE;
 	m_bDead									= FALSE;
+
+    EnterCriticalSection(&g_pGamePersistent->ps_activeGuard);
+    g_pGamePersistent->ps_active.insert(this);
+    LeaveCriticalSection(&g_pGamePersistent->ps_activeGuard);
 }
 extern ENGINE_API BOOL						g_bRendering; 
 
 //----------------------------------------------------
 CPS_Instance::~CPS_Instance					()
 {
-	VERIFY									(!g_bRendering);
+    EnterCriticalSection(&g_pGamePersistent->ps_activeGuard);
 	xr_set<CPS_Instance*>::iterator it		= g_pGamePersistent->ps_active.find(this);
 	VERIFY									(it!=g_pGamePersistent->ps_active.end());
 	g_pGamePersistent->ps_active.erase		(it);
 
+    LeaveCriticalSection(&g_pGamePersistent->ps_activeGuard);
+
+    EnterCriticalSection(&g_pGamePersistent->ps_destroyGuard);
 	xr_vector<CPS_Instance*>::iterator it2	= std::find( g_pGamePersistent->ps_destroy.begin(),
 													g_pGamePersistent->ps_destroy.end(), this);
 
 	VERIFY									(it2==g_pGamePersistent->ps_destroy.end());
+    LeaveCriticalSection(&g_pGamePersistent->ps_destroyGuard);
 
 	spatial_unregister						();
 	shedule_unregister						();

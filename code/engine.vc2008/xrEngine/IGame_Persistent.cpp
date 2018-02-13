@@ -41,6 +41,8 @@ IGame_Persistent::IGame_Persistent	()
 #endif // #ifdef INGAME_EDITOR
 
 	m_pGShaderConstants = ShadersExternalData();
+    InitializeCriticalSection(&ps_activeGuard);
+    InitializeCriticalSection(&ps_destroyGuard);
 }
 
 IGame_Persistent::~IGame_Persistent()
@@ -51,6 +53,9 @@ IGame_Persistent::~IGame_Persistent()
 	RDEVICE.seqAppActivate.Remove(this);
 	RDEVICE.seqAppDeactivate.Remove(this);
 	xr_delete(pEnvironment);
+
+    DeleteCriticalSection(&ps_activeGuard);
+    DeleteCriticalSection(&ps_destroyGuard);
 }
 
 void IGame_Persistent::OnAppActivate		()
@@ -188,6 +193,7 @@ void IGame_Persistent::OnFrame		()
 		psi->Play				(false);
 	}
 	// Destroy inactive particle systems
+    EnterCriticalSection(&ps_destroyGuard);
 	while (ps_destroy.size())
 	{
 //		u32 cnt					= ps_destroy.size();
@@ -201,6 +207,7 @@ void IGame_Persistent::OnFrame		()
 		ps_destroy.pop_back		();
 		psi->PSI_internal_delete();
 	}
+    LeaveCriticalSection(&ps_destroyGuard);
 #endif
 }
 
@@ -209,6 +216,7 @@ void IGame_Persistent::destroy_particles		(const bool &all_particles)
 #ifndef _EDITOR
 	ps_needtoplay.clear				();
 
+    EnterCriticalSection(&ps_destroyGuard);
 	while (ps_destroy.size())
 	{
 		CPS_Instance*	psi		= ps_destroy.back	();		
@@ -217,7 +225,9 @@ void IGame_Persistent::destroy_particles		(const bool &all_particles)
 		ps_destroy.pop_back		();
 		psi->PSI_internal_delete();
 	}
+    LeaveCriticalSection(&ps_destroyGuard);
 
+    EnterCriticalSection(&ps_activeGuard);
 	// delete active particles
 	if (all_particles) 
 	{
@@ -237,7 +247,8 @@ void IGame_Persistent::destroy_particles		(const bool &all_particles)
 			(*I)->PSI_internal_delete();
 	}
 
-	VERIFY(ps_needtoplay.empty() && ps_destroy.empty() && (!all_particles || ps_active.empty()));
+	//VERIFY(ps_needtoplay.empty() && ps_destroy.empty() && (!all_particles || ps_active.empty()));
+    LeaveCriticalSection(&ps_activeGuard);
 #endif
 }
 

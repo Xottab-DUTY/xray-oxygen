@@ -195,8 +195,10 @@ void CParticleGroup::SItem::Clear()
 	//	Igor: zero all pointers! Previous code didn't zero _source_ pointers,
 	//	just temporary ones.
 	_effect = 0;
+    EnterCriticalSection(&_childrenGuard);
 	_children_related.clear();
 	_children_free.clear();
+    LeaveCriticalSection(&_childrenGuard);
 }
 void CParticleGroup::SItem::StartRelatedChild(CParticleEffect* emitter, LPCSTR eff_name, PAPI::Particle& m)
 {
@@ -215,16 +217,20 @@ void CParticleGroup::SItem::StartRelatedChild(CParticleEffect* emitter, LPCSTR e
     M.c.set					(p);
     C->Play					();
     C->UpdateParent			(M,vel,FALSE);
+    EnterCriticalSection(&_childrenGuard);
     _children_related.push_back(C);
+    LeaveCriticalSection(&_childrenGuard);
 }
 void CParticleGroup::SItem::StopRelatedChild(u32 idx)
 {
+    EnterCriticalSection(&_childrenGuard);
 	VERIFY(idx<_children_related.size());
     dxRender_Visual*& V 			= _children_related[idx];
     ((CParticleEffect*)V)->Stop	(TRUE);
     _children_free.push_back	(V);
     _children_related[idx]		= _children_related.back();
     _children_related.pop_back	();
+    LeaveCriticalSection(&_childrenGuard);
 }
 void CParticleGroup::SItem::StartFreeChild(CParticleEffect* emitter, LPCSTR nm, PAPI::Particle& m)
 {
@@ -243,7 +249,10 @@ void CParticleGroup::SItem::StartFreeChild(CParticleEffect* emitter, LPCSTR nm, 
         M.c.set					(p);
         C->Play					();
         C->UpdateParent			(M,vel,FALSE);
+
+        EnterCriticalSection(&_childrenGuard);
         _children_free.push_back(C);
+        LeaveCriticalSection(&_childrenGuard);
     }else{
 #ifdef _EDITOR        
         Msg			("!Can't use looped effect '%s' as 'On Birth' child for group.",nm);
@@ -263,6 +272,7 @@ void CParticleGroup::SItem::Stop(BOOL def_stop)
     CParticleEffect* E	= static_cast<CParticleEffect*>(_effect);
     if (E) E->Stop(def_stop);
 
+    EnterCriticalSection(&_childrenGuard);
     for (auto it=_children_related.begin(); it!=_children_related.end(); it++)
         static_cast<CParticleEffect*>(*it)->Stop(def_stop);
     for (auto it=_children_free.begin(); it!=_children_free.end(); it++)
@@ -287,6 +297,7 @@ void CParticleGroup::SItem::Stop(BOOL def_stop)
         _children_related.clear();
         _children_free.clear	();
     }
+    LeaveCriticalSection(&_childrenGuard);
 }
 BOOL CParticleGroup::SItem::IsPlaying() const
 {
@@ -335,7 +346,10 @@ void CParticleGroup::SItem::OnFrame(u32 u_dt, const CPGDef::SEffect& def, Fbox& 
         if (E->IsPlaying()){
             bPlaying		= true;
             if (E->vis.box.is_valid())     box.merge	(E->vis.box);
-            if (def.m_Flags.is(CPGDef::SEffect::flOnPlayChild)&&def.m_OnPlayChildName.size()){
+            if (def.m_Flags.is(CPGDef::SEffect::flOnPlayChild)&&def.m_OnPlayChildName.size())
+            {
+                EnterCriticalSection(&_childrenGuard);
+
                 PAPI::Particle* particles;
                 u32 p_cnt;
                 PAPI::ParticleManager()->GetParticles(E->GetHandleEffect(),particles,p_cnt);
@@ -349,6 +363,8 @@ void CParticleGroup::SItem::OnFrame(u32 u_dt, const CPGDef::SEffect& def, Fbox& 
                         C->UpdateParent		(M,vel,FALSE);
                     }
                 }
+
+                LeaveCriticalSection(&_childrenGuard);
             }
         }
     }
@@ -369,6 +385,7 @@ void CParticleGroup::SItem::OnFrame(u32 u_dt, const CPGDef::SEffect& def, Fbox& 
             }
         }
     }
+    EnterCriticalSection(&_childrenGuard);
     if (!_children_free.empty()){
     	u32 rem_cnt				= 0;
         for (auto it=_children_free.begin(); it!=_children_free.end(); it++){
@@ -394,6 +411,7 @@ void CParticleGroup::SItem::OnFrame(u32 u_dt, const CPGDef::SEffect& def, Fbox& 
 			_children_free.erase(new_end, _children_free.end());
 		}
     }
+    LeaveCriticalSection(&_childrenGuard);
 //	Msg("C: %d CS: %d",_children.size(),_children_stopped.size());
 }
 void CParticleGroup::SItem::OnDeviceCreate()

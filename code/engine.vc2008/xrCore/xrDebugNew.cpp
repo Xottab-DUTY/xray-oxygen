@@ -124,8 +124,11 @@ void xrDebug::backend(const char *expression, const char *description, const cha
 	HWND wnd = GetActiveWindow();
 	if (!wnd) wnd = GetForegroundWindow();
 
-	ShowWindow(wnd, SW_MINIMIZE);
-	while (ShowCursor(TRUE) < 0);
+    if (!IsDebuggerPresent())
+    {
+        ShowWindow(wnd, SW_MINIMIZE);
+	    while (ShowCursor(TRUE) < 0);
+    }
 
 #if !defined(DEBUG) && !defined(MIXED_NEW)
 	do_exit("Please, see log-file for details.");

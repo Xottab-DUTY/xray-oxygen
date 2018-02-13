@@ -75,16 +75,27 @@ namespace PS
         	dxRender_Visual*	_effect;
             VisualVec		_children_related;
             VisualVec		_children_free;
+            CRITICAL_SECTION _childrenGuard;
         public:
+            SItem()
+            {
+                InitializeCriticalSection(&_childrenGuard);
+            }
+            ~SItem()
+            {
+                DeleteCriticalSection(&_childrenGuard);
+            }
         	void			Set				(dxRender_Visual* e);
             void			Clear			();
 
             IC u32			GetVisuals		(xr_vector<dxRender_Visual*>& visuals)
             {
+                EnterCriticalSection(&_childrenGuard);
             	visuals.reserve				(_children_related.size()+_children_free.size()+1);
                 if (_effect)				visuals.push_back(_effect);
                 visuals.insert				(visuals.end(),_children_related.begin(),_children_related.end());
                 visuals.insert				(visuals.end(),_children_free.begin(),_children_free.end());
+                LeaveCriticalSection(&_childrenGuard);
                 return u32(visuals.size());
             }
             

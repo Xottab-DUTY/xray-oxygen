@@ -61,7 +61,10 @@ using SkeletonWMVec = xr_vector<intrusive_ptr<CSkeletonWallmark>>;
 #ifdef DEBUG
 	struct dbg_marker{
 		BOOL*			lock;
-		dbg_marker		(BOOL* b)	{lock=b; VERIFY(*lock==FALSE); *lock=TRUE;}
+		dbg_marker		(BOOL* b)	{
+            lock=b; 
+            //VERIFY(*lock==FALSE); 
+            *lock=TRUE;}
 		~dbg_marker		()			{*lock=FALSE;}
 	};
 #	define _DBG_SINGLE_USE_MARKER	dbg_marker	_dbg_marker(&dbg_single_use_marker)
@@ -109,6 +112,7 @@ protected:
 	s32							UCalc_Visibox			;
 
     Flags64						visimask;
+    CRITICAL_SECTION                            updateGuard;
     
 	CSkeletonX*					LL_GetChild				(u32 idx);
 

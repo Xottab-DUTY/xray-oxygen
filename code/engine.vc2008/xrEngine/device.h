@@ -245,6 +245,9 @@ public:
 	// Multi-threading
 	std::recursive_mutex	mt_csEnter;
 	std::recursive_mutex	mt_csLeave;
+
+    std::recursive_mutex	cs_RenderEnter;
+    std::recursive_mutex	cs_RenderLeave;
 	volatile BOOL		mt_bMustExit;
 
 	ICF		void			remove_from_seq_parallel	(const fastdelegate::FastDelegate0<> &delegate)

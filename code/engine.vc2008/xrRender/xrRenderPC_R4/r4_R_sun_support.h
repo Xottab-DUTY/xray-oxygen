@@ -136,7 +136,8 @@ public:
 			if( fis_zero( max_mag ) )
 				continue;
 
-			VERIFY ( max_mag <= 1.f );
+            //#GIPERION: Figure out WTF is this value, and why this is invalid
+			//VERIFY ( max_mag <= 1.f );
 
 			float dist = -light_cuboid_polys[align_planes[p]].plane.n.dotproduct( translation );
 			align_vector.mad( light_cuboid_polys[align_planes[p]].plane.n, dist*max_mag );

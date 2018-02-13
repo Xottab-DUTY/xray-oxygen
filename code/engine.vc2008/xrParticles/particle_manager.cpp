@@ -259,6 +259,7 @@ u32 CParticleManager::LoadActions(int alist_id, IReader& R)
 	// Execute the specified action list.
 	ParticleActions* pa		= GetActionListPtr(alist_id);
 	VERIFY(pa);
+    pa->lock();
     pa->clear				();
     if (R.length())
 	{
@@ -269,7 +270,10 @@ u32 CParticleManager::LoadActions(int alist_id, IReader& R)
             pa->append			(act);
         }
     }
-    return pa->size();
+
+    int RetSize = pa->size();
+    pa->unlock();
+    return RetSize;
 }
 void CParticleManager::SaveActions(int alist_id, IWriter& W)
 {

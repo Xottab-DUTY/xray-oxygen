@@ -26,25 +26,42 @@ namespace PAPI{
 	class ParticleActions{
 		PAVec			actions;
 		bool			m_bLocked;
+        CRITICAL_SECTION m_bLockedGuard;
 	public:
-						ParticleActions()						{actions.reserve(4);m_bLocked=false;	}
-						~ParticleActions()						{clear();				}
+						ParticleActions()						{
+                            actions.reserve(4);m_bLocked=false;	
+                            InitializeCriticalSection(&m_bLockedGuard);
+                        }
+						~ParticleActions()						{
+                            lock();
+                            clear();
+                            unlock();
+                            DeleteCriticalSection(&m_bLockedGuard);
+                        }
 		void			clear			()
         {
-			R_ASSERT(!m_bLocked);
+			R_ASSERT(m_bLocked);
 			for (PAVecIt it=actions.begin(); it!=actions.end(); it++) 
 				xr_delete(*it);
 			actions.clear();
 		}
-		void			append			(ParticleAction* pa)	{R_ASSERT(!m_bLocked);actions.push_back(pa);	}
+		void			append			(ParticleAction* pa)	{R_ASSERT(m_bLocked);actions.push_back(pa);	}
 		bool			empty			()						{return	actions.empty();}
 		PAVecIt		begin			()						{return	actions.begin();}
 		PAVecIt		end				()						{return actions.end();	}
         int			size			()						{return int(actions.size());	}
-        void			resize			(int cnt)        		{R_ASSERT(!m_bLocked);actions.resize(cnt);	}
+        void			resize			(int cnt)        		{R_ASSERT(m_bLocked);actions.resize(cnt);	}
         void			copy			(ParticleActions* src);
-		void			lock			()						{R_ASSERT(!m_bLocked);m_bLocked=true;}
-		void			unlock			()						{R_ASSERT(m_bLocked);m_bLocked=false;}
+		void			lock			()						{
+            EnterCriticalSection(&m_bLockedGuard);
+            R_ASSERT(!m_bLocked);
+            m_bLocked=true;
+        }
+		void			unlock			()						{
+            R_ASSERT(m_bLocked);
+            m_bLocked = false;
+            LeaveCriticalSection(&m_bLockedGuard);
+        }
 	};
 };
 //---------------------------------------------------------------------------

@@ -338,6 +338,7 @@ CBlend*	CKinematicsAnimated::LL_PlayCycle(u16 part, MotionID motion_ID, BOOL  bM
 //	CMotionDef* m_def		= s_mots->motion_def(motion.idx);
     
 	// Process old cycles and create _new_
+    EnterCriticalSection(&updateGuard);
 	if( channel == 0 )
 	{
 		_DBG_SINGLE_USE_MARKER;
@@ -352,6 +353,7 @@ CBlend*	CKinematicsAnimated::LL_PlayCycle(u16 part, MotionID motion_ID, BOOL  bM
 	for (u32 i=0; i<P.bones.size(); i++)
 		Bone_Motion_Start_IM	((*bones)[P.bones[i]],B);
 	blend_cycles[part].push_back(B);
+    LeaveCriticalSection(&updateGuard);
 	return		B;
 }
 CBlend*	CKinematicsAnimated::LL_PlayCycle		(u16 part, MotionID motion_ID, BOOL bMixIn, PlayCallback Callback, LPVOID CallbackParam, u8 channel /*=0*/)
@@ -428,11 +430,13 @@ CBlend*	CKinematicsAnimated::LL_PlayFX		(u16 bone, MotionID motion_ID, float ble
 	if (BI_NONE==bone)		bone = iRoot;
 	
 	CBlend*	B		= IBlend_Create();
+    EnterCriticalSection(&updateGuard);
 	_DBG_SINGLE_USE_MARKER;
 	IFXBlendSetup(*B,motion_ID,blendAccrue,blendFalloff,Power,Speed,bone);
 	Bone_Motion_Start	((*bones)[bone],B);
 	
 	blend_fx.push_back(B);
+    LeaveCriticalSection(&updateGuard);
 	return			B;
 }
 
@@ -532,8 +536,13 @@ void	CKinematicsAnimated::LL_UpdateFxTracks( float dt )
 }
 void CKinematicsAnimated::UpdateTracks	()
 {
+    EnterCriticalSection(&updateGuard);
 	_DBG_SINGLE_USE_MARKER;
-	if (Update_LastTime==RDEVICE.dwTimeGlobal) return;
+    if (Update_LastTime == RDEVICE.dwTimeGlobal)
+    {
+        LeaveCriticalSection(&updateGuard);
+        return;
+    }
 	u32 DT	= RDEVICE.dwTimeGlobal-Update_LastTime;
 	if (DT>66) DT=66;
 	float dt = float(DT)/1000.f;
@@ -542,10 +551,12 @@ void CKinematicsAnimated::UpdateTracks	()
 	{
 		if( ( *GetUpdateTracksCalback() )( float(RDEVICE.dwTimeGlobal-Update_LastTime)/1000.f, *this ) )
 					Update_LastTime = RDEVICE.dwTimeGlobal;
+        LeaveCriticalSection(&updateGuard);
 		return;
 	}
 	Update_LastTime 	= RDEVICE.dwTimeGlobal;
 	LL_UpdateTracks	( dt, false, false );
+    LeaveCriticalSection(&updateGuard);
 }
 
 void CKinematicsAnimated::Release()
@@ -579,7 +590,6 @@ CKinematicsAnimated::CKinematicsAnimated():
 	m_update_tracks_callback( 0 ),
 	Update_LastTime ( 0 )
 {
-	
 }
 
 void	CKinematicsAnimated::IBoneInstances_Create()
@@ -635,6 +645,7 @@ void	CKinematicsAnimated::LL_SetChannelFactor (u16	channel,float factor)
 void CKinematicsAnimated::IBlend_Startup	()
 {
 	_DBG_SINGLE_USE_MARKER;
+    EnterCriticalSection(&updateGuard);
 	CBlend B; 
 	// intorr: Initialization of this variable is successfully performed in the constructor.
 	//std::memset(&B,0,sizeof(B));
@@ -657,16 +668,25 @@ void CKinematicsAnimated::IBlend_Startup	()
 		blend_cycles[i].clear();
 	blend_fx.clear		();
 	ChannelFactorsStartup();
+    LeaveCriticalSection(&updateGuard);
 }
 
 CBlend*	CKinematicsAnimated::IBlend_Create	()
 {
 	UpdateTracks	();
+    EnterCriticalSection(&updateGuard);
 	_DBG_SINGLE_USE_MARKER;
 	CBlend *I=blend_pool.begin(), *E=blend_pool.end();
-	for (; I!=E; I++)
-		if (I->blend_state() == CBlend::eFREE_SLOT) return I;
+    for (; I != E; I++)
+    {
+        if (I->blend_state() == CBlend::eFREE_SLOT)
+        {
+            LeaveCriticalSection(&updateGuard);
+            return I;
+        }
+    }
 	FATAL("Too many blended motions requisted");
+    LeaveCriticalSection(&updateGuard);
 	return 0;
 }
 void CKinematicsAnimated::Load(const char* N, IReader *data, u32 dwFlags)

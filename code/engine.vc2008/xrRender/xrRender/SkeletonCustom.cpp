@@ -86,10 +86,10 @@ void CKinematics::DebugRender(Fmatrix& XFORM)
 
 CKinematics::CKinematics()
 {
+    InitializeCriticalSection(&updateGuard);
 #ifdef DEBUG
 	dbg_single_use_marker		= FALSE;
 #endif
-
 	m_is_original_lod = false;
 }
 
@@ -111,6 +111,8 @@ CKinematics::~CKinematics	()
 
 		xr_delete(m_lod);
 	}
+
+    DeleteCriticalSection(&updateGuard);
 }
 
 void	CKinematics::IBoneInstances_Create()

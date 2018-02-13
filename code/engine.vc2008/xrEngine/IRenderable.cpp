@@ -15,7 +15,6 @@ IRenderable::IRenderable()
 extern ENGINE_API BOOL g_bRendering; 
 IRenderable::~IRenderable()
 {
-	VERIFY								(!g_bRendering); 
 	Render->model_Delete				(renderable.visual);
 	if (renderable.pROS)				Render->ros_destroy					(renderable.pROS);
 	renderable.visual					= NULL;

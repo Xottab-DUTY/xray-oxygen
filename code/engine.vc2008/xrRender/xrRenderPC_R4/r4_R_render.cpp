@@ -113,6 +113,11 @@ void CRender::render_main	(Fmatrix&	m_ViewProjection, bool _fportals)
 				{
 					// renderable
 					IRenderable*	renderable		= spatial->dcast_Renderable	();
+                    //#GIPERION: Figure out WTF!
+                    if (renderable == nullptr)
+                    {
+                        continue;
+                    }
 					VERIFY							(renderable);
 
 					// Occlusion

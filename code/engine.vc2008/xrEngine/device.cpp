@@ -157,6 +157,37 @@ void 			mt_Thread	(void *ptr)	{
 	}
 }
 
+void mt_render(void* ptr)
+{
+    while (true)
+    {
+        Device.cs_RenderEnter.lock();
+
+        if (Device.mt_bMustExit) {
+            //Device.mt_bMustExit = FALSE;				// Important!!!
+            Device.cs_RenderEnter.unlock();					// Important!!!
+            return;
+        }
+        if (Device.b_is_Active) {
+            if (Device.Begin()) {
+
+                Device.seqRender.Process(rp_Render);
+//                 if (psDeviceFlags.test(rsCameraPos) || psDeviceFlags.test(rsStatistic) || Statistic->errors.size())
+//                     Statistic->Show();
+                //	TEST!!!
+                //Statistic->RenderTOTAL_Real.End			();
+                //	Present goes here
+                Device.End();
+            }
+        }
+        Device.cs_RenderEnter.unlock();
+
+        Device.cs_RenderLeave.lock();
+        // returns sync signal to device
+        Device.cs_RenderLeave.unlock();
+    }
+}
+
 #include "igame_level.h"
 void CRenderDevice::PreCache	(u32 amount, bool b_draw_loadscreen, bool b_wait_user_input)
 {
@@ -207,6 +238,8 @@ void CRenderDevice::on_idle		()
 	}
 	else
 	{
+        cs_RenderLeave.lock();
+        cs_RenderEnter.unlock();
 		FrameMove();
 	}
 
@@ -239,6 +272,8 @@ void CRenderDevice::on_idle		()
 	mt_csEnter.unlock			();
 	Sleep						(0);
 
+#if 0
+
 #ifndef DEDICATED_SERVER
 	Statistic->RenderTOTAL_Real.FrameStart	();
 	Statistic->RenderTOTAL_Real.Begin		();
@@ -258,11 +293,15 @@ void CRenderDevice::on_idle		()
 	Statistic->RenderTOTAL_Real.FrameEnd	();
 	Statistic->RenderTOTAL.accum	= Statistic->RenderTOTAL_Real.accum;
 #endif // #ifndef DEDICATED_SERVER
+
+#endif
 	// *** Suspend threads
 	// Capture startup point
 	// Release end point - allow thread to wait for startup point
 	mt_csEnter.lock						();
 	mt_csLeave.unlock						();
+    cs_RenderEnter.lock();
+    cs_RenderLeave.unlock();
 
 	// Ensure, that second thread gets chance to execute anyway
 	if (dwFrame!=mt_Thread_marker)			{
@@ -359,8 +398,10 @@ void CRenderDevice::Run			()
 //	InitializeCriticalSection	(&mt_csEnter);
 //	InitializeCriticalSection	(&mt_csLeave);
 	mt_csEnter.lock			();
+    cs_RenderEnter.lock();
 	mt_bMustExit				= FALSE;
 	thread_spawn				(mt_Thread,"X-RAY Secondary thread",0,0);
+	thread_spawn				(mt_render,"X-RAY Render thread",0,0);
 
 	// Message cycle
 	seqAppStart.Process			(rp_AppStart);
@@ -375,6 +416,7 @@ void CRenderDevice::Run			()
 	// Stop Balance-Thread
 	mt_bMustExit			= TRUE;
 	mt_csEnter.unlock		();
+    cs_RenderEnter.unlock();
 	while (mt_bMustExit)	Sleep(0);
 //	DeleteCriticalSection	(&mt_csEnter);
 //	DeleteCriticalSection	(&mt_csLeave);

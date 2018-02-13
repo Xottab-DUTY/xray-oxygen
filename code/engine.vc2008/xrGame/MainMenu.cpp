@@ -361,7 +361,7 @@ void CMainMenu::OnFrame()
 	}
 	CDialogHolder::OnFrame();
 
-
+#if 0
 	//screenshot stuff
 	if (m_Flags.test(flGameSaveScreenshot) && Device.dwFrame > m_screenshotFrame)
 	{
@@ -377,6 +377,7 @@ void CMainMenu::OnFrame()
 		if (m_Flags.test(flRestoreConsole))
 			Console->Show();
 	}
+#endif
 
 	if (IsActive())
 	{
