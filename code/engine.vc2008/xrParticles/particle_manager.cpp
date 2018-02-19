@@ -138,6 +138,8 @@ void CParticleManager::Update(int effect_id, int alist_id, float dt)
     ParticleEffect* pe	= GetEffectPtr(effect_id);
     ParticleActions* pa	= GetActionListPtr(alist_id);
 
+    if (!pe || !pa) return;
+
 	VERIFY(pa);
 	VERIFY(pe);
 
@@ -204,6 +206,12 @@ void CParticleManager::SetCallback(int effect_id, OnBirthParticleCB b, OnDeadPar
 void CParticleManager::GetParticles(int effect_id, Particle*& particles, u32& cnt)
 {
 	ParticleEffect *pe = GetEffectPtr(effect_id);
+    if (pe == nullptr)
+    {
+        particles = nullptr;
+        cnt = 0;
+        return;
+    }
     particles		= pe->particles;
     cnt				= pe->p_count;
 }

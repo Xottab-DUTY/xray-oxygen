@@ -99,6 +99,7 @@ public:
 
 	virtual void						shedule_Update		( u32 T ); 
 	virtual void						UpdateCL			( );
+	virtual void						UpdateCLRender		( );
 	
 	virtual void						OnEvent				( NET_Packet& P, u16 type		);
 

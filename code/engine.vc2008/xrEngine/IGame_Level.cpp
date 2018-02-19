@@ -150,6 +150,9 @@ void	IGame_Level::OnRender()
 	TAL_EndVirtualTask();
 #endif // _GPA_ENABLED
 
+    //#GIPERION ! Insert Object.UpdateRender
+    Objects.UpdateRender();
+
     Render->Calculate();
     Render->Render();
 

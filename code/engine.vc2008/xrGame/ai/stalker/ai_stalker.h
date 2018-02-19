@@ -193,6 +193,7 @@ public:
 	virtual void						load								(IReader &input_packet);
 
 	virtual void						UpdateCL							();
+	virtual void						UpdateCLRender					    ();
 	virtual void						shedule_Update						(u32 dt);
 	virtual void						Think								();
 	virtual void						SelectAnimation						(const Fvector& _view, const Fvector& _move, float speed );

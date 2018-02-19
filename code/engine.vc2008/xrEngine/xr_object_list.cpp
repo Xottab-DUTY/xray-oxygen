@@ -24,6 +24,7 @@ public:
 CObjectList::CObjectList	( ) :
 	m_owner_thread_id		(GetCurrentThreadId())
 {
+    InitializeCriticalSection(&objects_activeGuard);
     std::memset(map_NETID,0,0xffff*sizeof(CObject*));
 }
 
@@ -41,6 +42,7 @@ CObjectList::~CObjectList	( )
     }
 
 	//R_ASSERT				( destroy_queue.empty()		);
+    DeleteCriticalSection(&objects_activeGuard);
 }
 
 CObject*	CObjectList::FindObjectByName	( shared_str name )
@@ -87,13 +89,18 @@ void	CObjectList::o_activate		( CObject*		O		)
 {
 	VERIFY						(O && O->processing_enabled());
 	o_remove					(objects_sleeping,O);
+
+    EnterCriticalSection(&objects_activeGuard);
 	objects_active.push_back	(O);
 	O->MakeMeCrow				();
+    LeaveCriticalSection(&objects_activeGuard);
 }
 void	CObjectList::o_sleep		( CObject*		O		)
 {
 	VERIFY	(O && !O->processing_enabled());
+    EnterCriticalSection(&objects_activeGuard);
 	o_remove					(objects_active,O);
+    LeaveCriticalSection(&objects_activeGuard);
 	objects_sleeping.push_back	(O);
 	O->MakeMeCrow				();
 }
@@ -117,6 +124,18 @@ void	CObjectList::SingleUpdate	(CObject* O)
 	if (O->H_Parent() && (O->H_Parent()->getDestroy() || O->H_Root()->getDestroy()))	
 		Msg	("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]",O->ID(),*O->cName(),*O->cNameSect(),O->H_Parent()->ID(),*O->H_Parent()->cName());
 
+}
+
+void CObjectList::SingleUpdateRender(CObject* O)
+{
+    if (!O->processing_enabled()) return;
+
+    if (O->H_Parent())
+    {
+        SingleUpdateRender(O->H_Parent());
+    }
+
+    O->UpdateCLRender();
 }
 
 void CObjectList::clear_crow_vec(Objects& o)
@@ -192,11 +211,13 @@ void CObjectList::Update		(bool bForce)
 	if (!destroy_queue.empty()) 
 	{
 		// Info
+        EnterCriticalSection(&objects_activeGuard);
 		for (auto oit : objects_active)
 			for (size_t it = destroy_queue.size(); it > 0; it--)
             {	
 				oit->net_Relcase(destroy_queue[it - 1]);
 			}
+        LeaveCriticalSection(&objects_activeGuard);
 
 		for (auto oit : objects_sleeping)
 			for (size_t it = destroy_queue.size(); it > 0; it--)	
@@ -215,6 +236,7 @@ void CObjectList::Update		(bool bForce)
 			}
 		}
 
+        EnterCriticalSection(&objects_activeGuard);
 		// Destroy
 		for (size_t it = destroy_queue.size(); it > 0; it--)
 		{
@@ -223,7 +245,24 @@ void CObjectList::Update		(bool bForce)
 			Destroy			(O);
 		}
 		destroy_queue.clear	();
+        LeaveCriticalSection(&objects_activeGuard);
 	}
+}
+
+void CObjectList::UpdateRender()
+{
+    if (!Device.Paused())
+    {
+        if (Device.fTimeDelta > EPS_S)
+        {
+            EnterCriticalSection(&objects_activeGuard);
+            for (CObject* obj : objects_active)
+            {
+                SingleUpdateRender(obj);
+            }
+            LeaveCriticalSection(&objects_activeGuard);
+        }
+    }
 }
 
 void CObjectList::net_Register		(CObject* O)

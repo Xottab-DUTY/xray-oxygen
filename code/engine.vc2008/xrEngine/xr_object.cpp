@@ -332,6 +332,11 @@ void CObject::UpdateCL			()
 	}
 }
 
+void CObject::UpdateCLRender()
+{
+
+}
+
 void CObject::shedule_Update	( u32 T )
 {
 	// consistency check

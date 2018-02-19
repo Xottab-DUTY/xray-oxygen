@@ -350,8 +350,15 @@ void CPhysicsShellHolder::UpdateCL	()
 {
 	inherited::UpdateCL	();
 	//обновить присоединенные партиклы
-	UpdateParticles		();
+	//UpdateParticles		();
 }
+
+void CPhysicsShellHolder::UpdateCLRender()
+{
+    //обновить присоединенные партиклы
+    UpdateParticles();
+}
+
 float CPhysicsShellHolder::EffectiveGravity()
 {
 	return physics_world()->Gravity();

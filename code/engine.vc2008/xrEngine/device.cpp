@@ -170,13 +170,32 @@ void mt_render(void* ptr)
         }
         if (Device.b_is_Active) {
             if (Device.Begin()) {
+                //Calculate camera matrices
+                // Precache
+                if (Device.dwPrecacheFrame)
+                {
+                    float factor = float(Device.dwPrecacheFrame) / float(Device.dwPrecacheTotal);
+                    float angle = PI_MUL_2 * factor;
+                    Device.vCameraDirection.set(_sin(angle), 0, _cos(angle));	Device.vCameraDirection.normalize();
+                    Device.vCameraTop.set(0, 1, 0);
+                    Device.vCameraRight.crossproduct(Device.vCameraTop, Device.vCameraDirection);
 
+                    Device.mView.build_camera_dir(Device.vCameraPosition, Device.vCameraDirection, Device.vCameraTop);
+                }
+
+                // Matrices
+                Device.mFullTransform.mul(Device.mProject, Device.mView);
+                Device.m_pRender->SetCacheXform(Device.mView, Device.mProject);
+                D3DXMatrixInverse((D3DXMATRIX*)&Device.mInvFullTransform, 0, (D3DXMATRIX*)&Device.mFullTransform);
+
+                Device.vCameraPosition_saved = Device.vCameraPosition;
+                Device.mFullTransform_saved = Device.mFullTransform;
+                Device.mView_saved = Device.mView;
+                Device.mProject_saved = Device.mProject;
+
+                //BEGIN RENDER THREAD SEQUENCE
                 Device.seqRender.Process(rp_Render);
-//                 if (psDeviceFlags.test(rsCameraPos) || psDeviceFlags.test(rsStatistic) || Statistic->errors.size())
-//                     Statistic->Show();
-                //	TEST!!!
-                //Statistic->RenderTOTAL_Real.End			();
-                //	Present goes here
+
                 Device.End();
             }
         }
@@ -243,28 +262,6 @@ void CRenderDevice::on_idle		()
 		FrameMove();
 	}
 
-	// Precache
-	if (dwPrecacheFrame)
-	{
-		float factor					= float(dwPrecacheFrame)/float(dwPrecacheTotal);
-		float angle						= PI_MUL_2 * factor;
-		vCameraDirection.set			(_sin(angle),0,_cos(angle));	vCameraDirection.normalize	();
-		vCameraTop.set					(0,1,0);
-		vCameraRight.crossproduct		(vCameraTop,vCameraDirection);
-
-		mView.build_camera_dir			(vCameraPosition,vCameraDirection,vCameraTop);
-	}
-
-	// Matrices
-	mFullTransform.mul			( mProject,mView	);
-	m_pRender->SetCacheXform(mView, mProject);
-	D3DXMatrixInverse			( (D3DXMATRIX*)&mInvFullTransform, 0, (D3DXMATRIX*)&mFullTransform);
-
-	vCameraPosition_saved	= vCameraPosition;
-	mFullTransform_saved	= mFullTransform;
-	mView_saved				= mView;
-	mProject_saved			= mProject;
-
 	// *** Resume threads
 	// Capture end point - thread must run only ONE cycle
 	// Release start point - allow thread to run
@@ -310,6 +307,9 @@ void CRenderDevice::on_idle		()
 		Device.seqParallel.clear	();
 		seqFrameMT.Process					(rp_Frame);
 	}
+
+    //Lastly, execute functions, that cannot be executed while several threads running
+    Device.seqSinglethreaded.Process(rp_Singlethreaded);
 
 #ifdef DEDICATED_SERVER
 	u32 FrameEndTime = TimerGlobal.GetElapsed_ms();

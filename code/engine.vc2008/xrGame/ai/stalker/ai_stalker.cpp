@@ -806,10 +806,6 @@ void CAI_Stalker::UpdateCL()
 	START_PROFILE("stalker/client_update/inherited")
 	inherited::UpdateCL				();
 	STOP_PROFILE
-	
-	START_PROFILE("stalker/client_update/physics")
-	m_pPhysics_support->in_UpdateCL	();
-	STOP_PROFILE
 
 	if (g_Alive()) {
 		START_PROFILE("stalker/client_update/sight_manager")
@@ -839,6 +835,13 @@ void CAI_Stalker::UpdateCL()
 #endif
 	STOP_PROFILE
 	STOP_PROFILE
+}
+
+void CAI_Stalker::UpdateCLRender()
+{
+    START_PROFILE("stalker/client_update/physics")
+        m_pPhysics_support->in_UpdateCL();
+    STOP_PROFILE
 }
 
 void CAI_Stalker ::PHHit				(SHit &H )

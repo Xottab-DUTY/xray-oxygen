@@ -22,6 +22,8 @@ DECLARE_MESSAGE(AppEnd);
 DECLARE_MESSAGE(DeviceReset);
 DECLARE_MESSAGE(ScreenResolutionChanged);
 
+DECLARE_MESSAGE(Singlethreaded);
+
 
 
 //-----------------------------------------------------------------------------

@@ -758,10 +758,7 @@ void CActor::UpdateCL	()
 		m_holder->UpdateEx( currentFOV() );
 
 	m_snd_noise -= 0.3f*Device.fTimeDelta;
-
-	inherited::UpdateCL				();
-	m_pPhysics_support->in_UpdateCL	();
-
+    inherited::UpdateCL();
 
 	if (g_Alive()) 
 		PickupModeUpdate	();	
@@ -884,6 +881,11 @@ void CActor::UpdateCL	()
 		g_player_hud->update			(trans);
 
 	m_bPickupMode=false;
+}
+
+void CActor::UpdateCLRender()
+{
+    m_pPhysics_support->in_UpdateCL();
 }
 
 float	NET_Jump = 0;

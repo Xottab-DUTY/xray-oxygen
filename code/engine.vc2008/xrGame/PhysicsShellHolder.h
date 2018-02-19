@@ -97,6 +97,7 @@ public:
 	virtual void			OnChangeVisual		();
 	//для наследования CParticlesPlayer
 	virtual void			UpdateCL			();
+    virtual void			UpdateCLRender		();
 			void			correct_spawn_pos	();
 protected:
 	virtual	bool			has_shell_collision_place( const CPhysicsShellHolder* obj ) const;

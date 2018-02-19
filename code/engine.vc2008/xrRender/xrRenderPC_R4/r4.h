@@ -25,7 +25,7 @@
 class dxRender_Visual;
 
 // definition
-class CRender	:	public R_dsgraph_structure
+class CRender	:	public R_dsgraph_structure, public pureSinglethreaded
 {
 public:
 	enum
@@ -49,6 +49,9 @@ public:
 		MMSM_AUTO,
 		MMSM_AUTODETECT
 	};
+
+
+    virtual void OnSinglethreaded(void) override;
 
 public:
 	struct		_options	{

@@ -91,7 +91,8 @@ public:
 	CRegistrator	<pureAppStart		>			seqAppStart;
 	CRegistrator	<pureAppEnd			>			seqAppEnd;
 	CRegistrator	<pureFrame			>			seqFrame;
-	CRegistrator	<pureScreenResolutionChanged>	seqResolutionChanged;
+    CRegistrator	<pureScreenResolutionChanged>	seqResolutionChanged;
+    CRegistrator	<pureSinglethreaded >	        seqSinglethreaded;
 
 	HWND									m_hWnd;
 //	CStats*									Statistic;

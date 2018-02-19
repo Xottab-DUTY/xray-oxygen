@@ -20,3 +20,4 @@ DECLARE_RP(DeviceReset);
 DECLARE_RP(ScreenResolutionChanged);
 
 
+DECLARE_RP(Singlethreaded);

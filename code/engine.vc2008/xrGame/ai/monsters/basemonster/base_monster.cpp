@@ -348,8 +348,11 @@ void CBaseMonster::UpdateCL()
 	}
 
 	control().update_frame();
+}
 
-	m_pPhysics_support->in_UpdateCL();
+void CBaseMonster::UpdateCLRender()
+{
+    m_pPhysics_support->in_UpdateCL();
 }
 
 void CBaseMonster::shedule_Update(u32 dt)

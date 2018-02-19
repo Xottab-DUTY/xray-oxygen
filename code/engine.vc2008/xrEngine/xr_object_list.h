@@ -16,6 +16,7 @@ private:
 private:
 	Objects						destroy_queue;
 	Objects						objects_active;
+    CRITICAL_SECTION            objects_activeGuard;
 	Objects						objects_sleeping;
 	Objects						m_crows[2];
 	u32							m_owner_thread_id;
@@ -50,7 +51,9 @@ public:
 	void						Destroy				( CObject*		O		);
 
 	void						SingleUpdate		( CObject*		O		);
+	void						SingleUpdateRender	( CObject*		O		);
 	void						Update				( bool bForce );
+	void						UpdateRender		();
 
 	void						net_Register		( CObject*		O		);
 	void						net_Unregister		( CObject*		O		);

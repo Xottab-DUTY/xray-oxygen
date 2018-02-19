@@ -145,6 +145,7 @@ void CParticleEffect::OnFrame(u32 frame_dt)
             PAPI::Particle* particles;
             u32 p_cnt;
             ParticleManager()->GetParticles(m_HandleEffect,particles,p_cnt);
+            if (particles == nullptr) return;
             
 			// our actions
 			if (m_Def->m_Flags.is(CPEDef::dfFramed|CPEDef::dfAnimated))	m_Def->ExecuteAnimate	(particles,p_cnt,fDT_STEP);
