@@ -96,6 +96,16 @@ IC	xr_string __cdecl	make_xrstr (LPCSTR format,...)
 	return		xr_string(temp);
 }
 
+IC  xr_string _cdecl    make_xrstr(const std::string& str)
+{
+    return xr_string(str.data(), str.size());
+}
+
+IC  xr_string _cdecl    make_xrstr(const xr_string::Super& str)
+{
+    return xr_string(str.data(), str.size());
+}
+
 IC	xr_string __cdecl	make_xrstr (bool  b) { return b ? "+" : "-"; }
 IC	xr_string __cdecl	make_xrstr (float f) { return make_xrstr("%f", f); }
 IC	xr_string __cdecl	make_xrstr (s32   d) { return make_xrstr("%i", d); }

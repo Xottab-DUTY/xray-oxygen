@@ -274,12 +274,12 @@ public:
 	ICF  void						set_Format			(IDirect3DVertexDeclaration9* _decl);
 #endif	//	USE_DX10
 
-	ICF void						set_PS				(ID3DPixelShader* _ps, LPCSTR _n=0);
-	ICF void						set_PS				(ref_ps& _ps)						{ set_PS(_ps->ps,_ps->cName.c_str());				}
+	ICF void						set_PS				(const ID3DPixelShader* _ps, LPCSTR _n=0);
+	ICF void						set_PS				(const ref_ps& _ps)						{ set_PS(_ps->ps,_ps->cName.c_str());				}
 
 #if defined(USE_DX10) || defined(USE_DX11)
-	ICF void						set_GS				(ID3DGeometryShader* _gs, LPCSTR _n=0);
-	ICF void						set_GS				(ref_gs& _gs)						{ set_GS(_gs->gs,_gs->cName.c_str());				}
+	ICF void						set_GS				(const ID3DGeometryShader* _gs, LPCSTR _n=0);
+	ICF void						set_GS				(const ref_gs& _gs)						{ set_GS(_gs->gs,_gs->cName.c_str());				}
 
 #	ifdef USE_DX11
 	ICF void						set_HS				(ID3D11HullShader* _hs, LPCSTR _n=0);
@@ -300,12 +300,12 @@ public:
 	ICF	bool						is_TessEnabled		() {return false;}
 #endif
 
-	ICF void						set_VS				(ref_vs& _vs);
+	ICF void						set_VS				(const ref_vs& _vs);
 #if defined(USE_DX10) || defined(USE_DX11)
 	ICF void						set_VS				(SVS* _vs);
 protected:	//	In DX10 we need input shader signature which is stored in ref_vs
 #endif	//	USE_DX10
-	ICF void						set_VS				(ID3DVertexShader* _vs, LPCSTR _n=0);
+	ICF void						set_VS				(const ID3DVertexShader* _vs, LPCSTR _n=0);
 #if defined(USE_DX10) || defined(USE_DX11)
 public:
 #endif	//	USE_DX10

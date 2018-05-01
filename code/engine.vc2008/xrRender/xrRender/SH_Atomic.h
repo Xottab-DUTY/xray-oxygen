@@ -36,6 +36,17 @@ struct ECORE_API SVS : public xr_resource_named
 };
 typedef	resptr_core<SVS,resptr_base<SVS> >	ref_vs;
 
+namespace std {
+    template<>
+    class hash<ref_vs> {
+    public:
+        size_t operator()(const ref_vs &s) const
+        {
+            return (size_t)s->vs;
+        }
+    };
+}
+
 //////////////////////////////////////////////////////////////////////////
 struct ECORE_API SPS : public xr_resource_named
 {

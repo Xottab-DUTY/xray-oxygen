@@ -109,6 +109,11 @@ D3DFORMAT CHW::selectDepthStencil	(D3DFORMAT fTarget)
 	return D3DFMT_UNKNOWN;
 }
 
+bool CHW::CompareDevices(DXGI_ADAPTER_DESC1& PreviousDevice, DXGI_ADAPTER_DESC1& CurrentDevice)
+{
+    return false;
+}
+
 void	CHW::DestroyDevice	()
 {
 	_SHOW_REF				("refCount:pBaseZB",pBaseZB);

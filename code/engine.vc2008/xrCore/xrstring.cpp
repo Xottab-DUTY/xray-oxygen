@@ -228,3 +228,133 @@ str_container::~str_container()
 	//dump ();
 	xr_delete(impl);
 }
+
+
+//xr_string class
+
+xr_vector<xr_string> xr_string::Split(LPCSTR Str, int StrSize, char splitCh)
+{
+    xr_vector<xr_string> Result;
+
+    int SubStrBeginCursor = 0;
+    for (int StrCursor = 0; StrCursor < StrSize; ++StrCursor)
+    {
+        if (Str[StrCursor] == splitCh)
+        {
+            //Don't create empty string
+            if ((StrCursor - 1 - SubStrBeginCursor) > 0)
+            {
+                Result.push_back(xr_string(&Str[SubStrBeginCursor], StrCursor - 1));
+            }
+        }
+    }
+
+    return Result;
+}
+
+xr_string::xr_string()
+    : Super()
+{
+}
+
+xr_string::xr_string(LPCSTR Str, int Size)
+    : Super(Str, Size)
+{
+}
+
+xr_string::xr_string(const xr_string& other)
+    : Super(other)
+{
+}
+
+xr_string::xr_string(const xr_string&& other)
+    : Super(other)
+{
+}
+
+xr_string::xr_string(const Super&& other)
+    : Super(other)
+{
+}
+
+xr_string::xr_string(LPCSTR Str)
+{
+    assign(Str);
+}
+
+xr_string& xr_string::operator=(LPCSTR Str)
+{
+    assign(Str);
+    return *this;
+}
+
+xr_string& xr_string::operator=(const xr_string& other)
+{
+    assign(other);
+    return *this;
+}
+
+xr_string& xr_string::operator=(const Super& other)
+{
+    assign(other);
+    return *this;
+}
+
+xr_vector<xr_string> xr_string::Split(char splitCh)
+{
+    return Split(data(), size(), splitCh);
+}
+
+
+xr_string xr_string::RemoveWhitespaces() const
+{
+    int Size = size();
+    if (Size == 0) return xr_string();
+
+    xr_string Result;
+    Result.reserve(Size);
+
+    const char* OrigStr = data();
+
+    for (int i = 0; i < Size; ++i)
+    {
+        if (*OrigStr != ' ')
+        {
+            Result.push_back(OrigStr[i]);
+        }
+    }
+
+    return Result;
+}
+
+bool xr_string::StartWith(const xr_string& Other) const
+{
+    return StartWith(Other.data(), Other.size());
+}
+
+
+bool xr_string::StartWith(LPCSTR Str) const
+{
+    u32 StrLen = xr_strlen(Str);
+    return StartWith(Str, (int)StrLen);
+}
+
+bool xr_string::StartWith(LPCSTR Str, int Size) const
+{
+    int OurSize = size();
+
+    //String is greater then our, we can't success
+    if (OurSize < Size) return false;
+
+    const char* OurStr = data();
+
+    for (int i = 0; i < Size; ++i)
+    {
+        if (OurStr[i] != Str[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}

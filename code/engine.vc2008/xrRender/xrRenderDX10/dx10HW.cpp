@@ -45,11 +45,74 @@ void CHW::CreateD3D()
 	IDXGIFactory1 * pFactory;
 	R_CHK( CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)(&pFactory)) );
 
-	m_bUsePerfhud = false;
+    HRESULT EnumResult = S_OK;
+    IDXGIAdapter1* PreviousAdapter = nullptr;
+    int DeviceId = 0;
+    do
+    {
+        EnumResult = pFactory->EnumAdapters1(DeviceId, &m_pAdapter);
+        if (PreviousAdapter != nullptr && EnumResult == S_OK)
+        {
+            //This adapter VS previous adapter
+            //WHO WILL SURVIVE?!
+            DXGI_ADAPTER_DESC1 CurrentAdapterDesc;
+            ZeroMemory(&CurrentAdapterDesc, sizeof(CurrentAdapterDesc));
+            R_CHK(m_pAdapter->GetDesc1(&CurrentAdapterDesc));
 
-	pFactory->EnumAdapters1(0, &m_pAdapter);
-
+            DXGI_ADAPTER_DESC1 PreviousAdapterDesc;
+            ZeroMemory(&PreviousAdapterDesc, sizeof(PreviousAdapterDesc));
+            R_CHK(PreviousAdapter->GetDesc1(&PreviousAdapterDesc));
+            
+            if (CompareDevices(PreviousAdapterDesc, CurrentAdapterDesc))
+            {
+                PreviousAdapter->Release();
+                PreviousAdapter = m_pAdapter;
+            }
+            else
+            {
+                m_pAdapter->Release();
+                m_pAdapter = PreviousAdapter;
+            }
+        }
+        else if (EnumResult != S_OK)
+        {
+            //Enumeration stopped, accept last known adapter
+            m_pAdapter = PreviousAdapter;
+        }
+        else
+        {
+            PreviousAdapter = m_pAdapter;
+        }
+        DeviceId++;
+    } while (EnumResult == S_OK);
+    
 	pFactory->Release();
+}
+
+
+bool CHW::CompareDevices(DXGI_ADAPTER_DESC1& PreviousDevice, DXGI_ADAPTER_DESC1& CurrentDevice)
+{
+    if ((PreviousDevice.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+    {
+        return true;
+    }
+
+    //#TODO: Check for Intel HDA
+
+    //Thanks UE4 for info
+    bool IsAMD         = PreviousDevice.VendorId == 0x1002;
+    bool IsIntel       = PreviousDevice.VendorId == 0x8086;
+    bool IsNVIDIA      = PreviousDevice.VendorId == 0x10DE;
+    bool IsMicrosoft   = PreviousDevice.VendorId == 0x1414;
+
+    
+    //Last thing - check if current device have more video memory
+    if (CurrentDevice.DedicatedVideoMemory > PreviousDevice.DedicatedVideoMemory)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void CHW::DestroyD3D()
@@ -69,9 +132,6 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 
 	m_DriverType = Caps.bForceGPU_REF ? 
 		D3D_DRIVER_TYPE_REFERENCE : D3D_DRIVER_TYPE_HARDWARE;
-
-	if (m_bUsePerfhud)
-		m_DriverType = D3D_DRIVER_TYPE_REFERENCE;
 
 	// Display the name of video board
 	DXGI_ADAPTER_DESC1 Desc;

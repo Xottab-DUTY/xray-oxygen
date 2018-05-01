@@ -141,7 +141,7 @@ void __fastcall mapMatrix_Render	(mapMatrixItems& N)
 // ALPHA
 void __fastcall sorted_L1		(mapSorted_T::value_type& N)
 {
-	VERIFY (N);
+	VERIFY (N.second.se);
 	dxRender_Visual *V				= N.second.pVisual;
 	VERIFY (V && V->shader._get());
 	RCache.set_Element				(N.second.se);

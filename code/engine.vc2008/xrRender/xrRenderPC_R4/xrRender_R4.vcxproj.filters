@@ -747,6 +747,9 @@
     <ClInclude Include="..\..\utils\common\NvMender2003\remove_isolated_verts.h">
       <Filter>Editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\xrRender\shaderIncludeResolver.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1326,6 +1329,9 @@
       <Filter>Shading templates\3dFluid</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\utils\common\NvMender2003\NVMeshMender4.cpp" />
+    <ClCompile Include="..\xrRender\shaderIncludeResolver.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="..\..\xrCore.natvis" />

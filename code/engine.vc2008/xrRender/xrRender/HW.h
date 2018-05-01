@@ -7,6 +7,7 @@
 #pragma once
 
 #include "hwcaps.h"
+#include "dxgi.h"
 
 #ifndef _MAYA_EXPORT
 #include "stats_manager.h"
@@ -39,6 +40,9 @@ public:
 	void					updateWindowProps		(HWND hw);
 	BOOL					support					(D3DFORMAT fmt, DWORD type, DWORD usage);
 
+    //compare device through their description structures. Return true if current device is better
+    bool                    CompareDevices          (DXGI_ADAPTER_DESC1& PreviousDevice, DXGI_ADAPTER_DESC1& CurrentDevice);
+
 #ifdef DEBUG
 #if defined(USE_DX10) || defined(USE_DX11)
 	void	Validate(void)	{};
@@ -63,7 +67,6 @@ public:
 
 	D3D_DRIVER_TYPE		m_DriverType;	//	DevT equivalent
 	DXGI_SWAP_CHAIN_DESC	m_ChainDesc;	//	DevPP equivalent
-	bool					m_bUsePerfhud;
 	D3D_FEATURE_LEVEL		FeatureLevel;
 #elif defined(USE_DX10)
 public:
@@ -80,7 +83,6 @@ public:
 
 	D3D10_DRIVER_TYPE		m_DriverType;	//	DevT equivalent
 	DXGI_SWAP_CHAIN_DESC	m_ChainDesc;	//	DevPP equivalent
-	bool					m_bUsePerfhud;
 	D3D_FEATURE_LEVEL		FeatureLevel;
 #else
 
