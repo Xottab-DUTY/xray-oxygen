@@ -124,11 +124,12 @@ void xrDebug::backend(const char *expression, const char *description, const cha
 	HWND wnd = GetActiveWindow();
 	if (!wnd) wnd = GetForegroundWindow();
 
-    if (!IsDebuggerPresent())
+    //Sometimes if we crashed not in main thread, we can stuck at ShowWindow
+    if (GetCurrentThreadId() == m_mainThreadId)
     {
-        ShowWindow(wnd, SW_MINIMIZE);
-	    while (ShowCursor(TRUE) < 0);
+	    ShowWindow(wnd, SW_MINIMIZE);
     }
+	while (ShowCursor(TRUE) < 0);
 
 #if !defined(DEBUG) && !defined(MIXED_NEW)
 	do_exit("Please, see log-file for details.");

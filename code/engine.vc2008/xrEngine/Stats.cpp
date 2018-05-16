@@ -15,6 +15,15 @@ Flags32 g_stats_flags		= {0};
 // stats
 DECLARE_RP(Stats);
 
+//#GIPERION: Perhaps we need a general header with most used colors for all systems, not only debug?
+//Format: Alpha, Red, Green, Blue
+enum DebugTextColor : DWORD
+{
+    DTC_RED = 0xFFF0672B,
+    DTC_YELLOW = 0xFFF6D434,
+    DTC_GREEN = 0xFF67F92E,
+};
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -23,6 +32,7 @@ CStats::CStats	()
 {
 	fFPS				= 30.f;
 	fRFPS				= 30.f;
+    fLastDisplayedFPS   = 30.f;
 	fTPS				= 0;
 	pFont				= 0;
 	fMem_calls			= 0;
@@ -34,17 +44,6 @@ CStats::~CStats()
 {
 	Device.seqRender.Remove		(this);
 	xr_delete		(pFont);
-}
-
-void draw_fps(CGameFont* pFont)
-{
-	float sz		=
-	pFont->GetHeight();
-	pFont->SetHeightI(0.018f);
-	pFont->SetColor	(0xFFFFA917);
-	pFont->Out		(10, 10, "FPS: %0.0f",1.0f/Device.fTimeDelta);
-	pFont->SetHeight(sz);
-	pFont->OnRender	();
 }
 
 void _draw_cam_pos(CGameFont* pFont)
@@ -120,9 +119,8 @@ void CStats::Show()
 	}
 
 	// calc FPS & TPS
-	if (Device.fTimeDelta>EPS_S) {
-		float fps  = 1.f/Device.fTimeDelta;
-		//if (Engine.External.tune_enabled)	vtune.update	(fps);
+	if (fRawFrameDeltaTime > EPS_S) {
+		float fps  = 1.f / fRawFrameDeltaTime;
 		float fOne = 0.3f;
 		float fInv = 1.f-fOne;
 		fFPS = fInv*fFPS + fOne*fps;
@@ -270,8 +268,38 @@ void CStats::Show()
 		seqStats.Process				(rp_Stats);
 		pFont->OnRender					();
 	};
-	if( psDeviceFlags.test(rsDrawFPS) ){
-		draw_fps					(pFont);
+
+	if( psDeviceFlags.test(rsDrawFPS) )
+    {
+        //On every 25 frame, update last known fps
+        if ((Core.dwFrame % 25) == 0)
+        {
+            fLastDisplayedFPS = fFPS;
+        }
+        float sz = pFont->GetHeight();
+        pFont->SetHeightI(0.018f);
+        if (fLastDisplayedFPS > 50.0f)
+        {
+            pFont->SetColor(DebugTextColor::DTC_GREEN);
+        }
+        else if (fLastDisplayedFPS > 30.0f)
+        {
+            pFont->SetColor(DebugTextColor::DTC_YELLOW);
+        }
+        else
+        {
+            pFont->SetColor(DebugTextColor::DTC_RED);
+        }
+        
+        const char* FPSFormat = "FPS: %0.0f";
+        //If game paused, engine not updating deltaTime variable, so FPS variable is freezed to last value
+        if (Device.Paused())
+        {
+            FPSFormat = "LAST KNOWN FPS: %0.0f";
+        }
+
+        pFont->Out(10, 10, FPSFormat, fLastDisplayedFPS);
+        pFont->SetHeight(sz);
 		pFont->OnRender					();
 	};
 	
@@ -280,27 +308,6 @@ void CStats::Show()
 		pFont->OnRender					();
 	};
 #ifdef DEBUG
-	//////////////////////////////////////////////////////////////////////////
-	// PERF ALERT
-	if (!g_bDisableRedText)
-	{
-		CGameFont&	F = *((CGameFont*)pFont);
-		F.SetColor						(color_rgba(255,16,16,255));
-		F.OutSet						(300,300);
-		F.SetHeightI						(f_base_size*2);
-		if (fFPS<30)					F.OutNext	("FPS       < 30:   %3.1f",	fFPS);
-		m_pRender->GuardVerts(F);
-		if (psDeviceFlags.test(rsStatistic))
-		{
-			m_pRender->GuardDrawCalls(F);
-			if (RenderDUMP_DT_Count>1000)	F.OutNext	("DT_count  > 1000: %u",	RenderDUMP_DT_Count);
-			F.OutSkip						();
-			if (Sheduler.result>3.f)		F.OutNext	("Update     > 3ms:	%3.1f",	Sheduler.result);
-			if (UpdateClient.result>3.f)	F.OutNext	("UpdateCL   > 3ms: %3.1f",	UpdateClient.result);
-			if (Physics.result>5.f)			F.OutNext	("Physics    > 5ms: %3.1f",	Physics.result);	
-		}
-	}
-
 	//////////////////////////////////////////////////////////////////////////
 	// Show errors
 	if (!g_bDisableRedText && errors.size())

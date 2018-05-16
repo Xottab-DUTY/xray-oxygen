@@ -47,7 +47,7 @@ PROTECT_API void CRenderDevice::Initialize			()
 	// Unless a substitute hWnd has been specified, create a window to render into
     if( m_hWnd == NULL)
     {
-		const char*	wndclass ="_XRAY_1.5";
+		const char*	wndclass ="_XRAY_1.7";
 
         // Register the windows class
 		HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(0);
@@ -75,7 +75,7 @@ PROTECT_API void CRenderDevice::Initialize			()
 
         // Create the render window
 		m_hWnd = CreateWindowEx(wndStyle,
-								wndclass, "S.T.A.L.K.E.R.: Call of Pripyat", m_dwWindowStyle,
+								wndclass, "X-Ray Oxygen", m_dwWindowStyle,
                                /*rc.left, rc.top, */CW_USEDEFAULT, CW_USEDEFAULT,
                                (rc.right-rc.left), (rc.bottom-rc.top), 0L,
                                0, hInstance, 0L );

@@ -25,7 +25,8 @@ class ENGINE_API CStats:
 public:
 	CGameFont*	pFont;
 
-	float		fFPS,fRFPS,fTPS		;			// FPS, RenderFPS, TPS
+    float       fRawFrameDeltaTime; // Basically is a Device.fTimeDelta, but not freezed in main menu, and more precise
+	float		fFPS,fRFPS,fTPS, fLastDisplayedFPS;			// FPS, RenderFPS, TPS, FPS that changed every 25 frame
 	float		fMem_calls			;
 	u32			dwMem_calls			;
 	u32			dwSND_Played,dwSND_Allocated;	// Play/Alloc

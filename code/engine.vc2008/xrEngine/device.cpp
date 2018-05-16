@@ -27,6 +27,18 @@
 ENGINE_API CRenderDevice Device;
 ENGINE_API CLoadScreenRenderer load_screen_renderer;
 
+DWORD gMainThreadId = 0xFFFFFFFF;
+DWORD gSecondaryThreadId = 0xFFFFFFFF;
+
+ENGINE_API bool IsMainThread()
+{
+    return GetCurrentThreadId() == gMainThreadId;
+}
+
+ENGINE_API bool IsSecondaryThread()
+{
+    return GetCurrentThreadId() == gSecondaryThreadId;
+}
 
 ENGINE_API BOOL g_bRendering = FALSE; 
 
@@ -130,7 +142,10 @@ void CRenderDevice::End		(void)
 
 
 volatile u32	mt_Thread_marker		= 0x12345678;
-void 			mt_Thread	(void *ptr)	{
+void 			mt_Thread	(void *ptr)	
+{
+    gSecondaryThreadId = GetCurrentThreadId();
+
 	while (true) {
 		// waiting for Device permission to execute
 		Device.mt_csEnter.lock	();
@@ -441,7 +456,8 @@ void CRenderDevice::FrameMove()
 		//dwTimeDelta		=	20;
 		//dwTimeGlobal	+=	20;
 		// 33ms = 30fps
-		fTimeDelta		=	0.033f;			
+		fTimeDelta		=	0.033f;
+        Statistic->fRawFrameDeltaTime = fTimeDelta;
 		fTimeGlobal		+=	0.033f;
 		dwTimeDelta		=	33;
 		dwTimeGlobal	+=	33;
@@ -449,6 +465,7 @@ void CRenderDevice::FrameMove()
 		// Timer
 		float fPreviousFrameTime = Timer.GetElapsed_sec(); Timer.Start();	// previous frame
 		fTimeDelta = 0.1f * fTimeDelta + 0.9f*fPreviousFrameTime;			// smooth random system activity - worst case ~7% error
+        Statistic->fRawFrameDeltaTime = fTimeDelta;                         // copy unmodified fTimeDelta, for statistic purpose
 		//fTimeDelta = 0.7f * fTimeDelta + 0.3f*fPreviousFrameTime;			// smooth random system activity
 		if (fTimeDelta>.1f)    
 			fTimeDelta = .1f;							// limit to 15fps minimum

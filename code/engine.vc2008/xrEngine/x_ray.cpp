@@ -385,15 +385,12 @@ ENGINE_API int RunApplication(char* commandLine)
 		HMODULE const kernel32	= LoadLibrary("kernel32.dll");
 		R_ASSERT				(kernel32);
 
-		typedef BOOL (__stdcall*HeapSetInformation_type) (HANDLE, HEAP_INFORMATION_CLASS, PVOID, SIZE_T);
-		HeapSetInformation_type const heap_set_information = (HeapSetInformation_type)GetProcAddress(kernel32, "HeapSetInformation");
-		if (heap_set_information) 
-		{
-			ULONG HeapFragValue	= 2;
-			heap_set_information(GetProcessHeap(), HeapCompatibilityInformation, &HeapFragValue, sizeof(HeapFragValue));
-		}
+		size_t HeapFragValue = 2;
+		HeapSetInformation(GetProcessHeap(), HeapCompatibilityInformation, &HeapFragValue, sizeof(HeapFragValue));
 	}
 
+    gMainThreadId = GetCurrentThreadId();
+    Debug.set_mainThreadId(gMainThreadId);
 	// Check for another instance
 #ifdef NO_MULTI_INSTANCES
 	#define STALKER_PRESENCE_MUTEX "Local\\STALKER-COP"
