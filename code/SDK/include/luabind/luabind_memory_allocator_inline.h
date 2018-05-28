@@ -44,7 +44,7 @@ typename luabind::memory_allocator<T>::const_pointer luabind::memory_allocator<T
 }
 #pragma warning(disable: 5037)
 template <typename T>
-typename luabind::memory_allocator<T>::pointer luabind::memory_allocator<T>::allocate(size_type const n, void const* const p = 0) const
+typename luabind::memory_allocator<T>::pointer luabind::memory_allocator<T>::allocate(size_type const n, void const* const p) const
 {
 	pointer pResult = (pointer)call_allocator(p, n * sizeof(T));
 	if (!n)
