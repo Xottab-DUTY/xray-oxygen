@@ -25,3 +25,4 @@ int APIENTRY WinMain(HINSTANCE hInsttance, HINSTANCE hPrevInstance, char* lpCmdL
     RunApplication(params.data());
 
     return 0;
+}
