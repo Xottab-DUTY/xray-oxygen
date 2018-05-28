@@ -27,6 +27,7 @@ class PROTECT_API CDialogHolder :public pureFrame
 	//dialogs
 	xr_vector<recvItem>										m_input_receivers;
 	xr_vector<dlgItem>										m_dialogsToRender;
+    xrCriticalSection                                       m_dialogsToRenderGuard;
 	xr_vector<dlgItem>										m_dialogsToRender_new;
 	bool													m_b_in_update;
 

@@ -117,13 +117,20 @@ void CDialogHolder::AddDialogToRender(CUIWindow* pDialog)
 	bool bAdd		= (m_dialogsToRender_new.end() == std::find(m_dialogsToRender_new.begin(),m_dialogsToRender_new.end(),itm));
 	if(!bAdd)		return;
 	
+    m_dialogsToRenderGuard.Enter();
 	bAdd			= (m_dialogsToRender.end() == std::find(m_dialogsToRender.begin(),m_dialogsToRender.end(),itm));
+    m_dialogsToRenderGuard.Leave();
+
 	if(!bAdd)		return;
 
 	if(m_b_in_update)
 		m_dialogsToRender_new.push_back(itm);
-	else
+    else
+    {
+        m_dialogsToRenderGuard.Enter();
 		m_dialogsToRender.push_back(itm);
+        m_dialogsToRenderGuard.Leave();
+    }
 
 	pDialog->Show(true);
 }
@@ -132,25 +139,30 @@ void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog)
 {
 	dlgItem itm		(pDialog);
 	itm.enabled		= true;
-	xr_vector<dlgItem>::iterator it = std::find(m_dialogsToRender.begin(),m_dialogsToRender.end(),itm);
 
-	if(it!=m_dialogsToRender.end())
+    m_dialogsToRenderGuard.Enter();
+	xr_vector<dlgItem>::iterator it = std::find(m_dialogsToRender.begin(),m_dialogsToRender.end(),itm);
+    
+	if(it != m_dialogsToRender.end())
 	{
 		(*it).wnd->Show(false);
 		(*it).wnd->Enable(false);
 		(*it).enabled = false;
 	}
+    m_dialogsToRenderGuard.Leave();
 }
 
 
 
 void CDialogHolder::DoRenderDialogs()
 {
+    m_dialogsToRenderGuard.Enter();
 	xr_vector<dlgItem>::iterator it = m_dialogsToRender.begin();
 	for(; it!=m_dialogsToRender.end();++it){
 		if( (*it).enabled && (*it).wnd->IsShown() )
 			(*it).wnd->Draw();
 	}
+    m_dialogsToRenderGuard.Leave();
 }
 
 void  CDialogHolder::OnExternalHideIndicators()
@@ -232,6 +244,8 @@ void CDialogHolder::OnFrame()
 	}
 
 	m_b_in_update = false;
+
+    m_dialogsToRenderGuard.Enter();
 	if(!m_dialogsToRender_new.empty())
 	{
 		m_dialogsToRender.insert	(m_dialogsToRender.end(),m_dialogsToRender_new.begin(),m_dialogsToRender_new.end());
@@ -241,6 +255,8 @@ void CDialogHolder::OnFrame()
 	std::sort			(m_dialogsToRender.begin(), m_dialogsToRender.end());
 	while (!m_dialogsToRender.empty() && (!m_dialogsToRender[m_dialogsToRender.size()-1].enabled)) 
 		m_dialogsToRender.pop_back();
+
+    m_dialogsToRenderGuard.Leave();
 }
 
 void CDialogHolder::CleanInternals()
