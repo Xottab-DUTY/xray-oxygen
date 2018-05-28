@@ -198,6 +198,7 @@ void CRender::render_menu	()
 extern u32 g_r;
 void CRender::Render		()
 {
+    VERIFY(IsRenderThread());
 	PIX_EVENT(CRender_Render);
 
 	g_r						= 1;
