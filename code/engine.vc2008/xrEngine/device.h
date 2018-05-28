@@ -27,10 +27,12 @@
 
 //Thread Id's
 extern DWORD gMainThreadId;
+extern DWORD gRenderThreadId;
 extern DWORD gSecondaryThreadId;
 
 ENGINE_API bool IsMainThread();
 ENGINE_API bool IsSecondaryThread();
+ENGINE_API bool IsRenderThread();
 
 class engine_impl;
 

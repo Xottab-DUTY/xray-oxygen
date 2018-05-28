@@ -27,8 +27,9 @@
 ENGINE_API CRenderDevice Device;
 ENGINE_API CLoadScreenRenderer load_screen_renderer;
 
-DWORD gMainThreadId = 0xFFFFFFFF;
+DWORD gMainThreadId      = 0xFFFFFFFF;
 DWORD gSecondaryThreadId = 0xFFFFFFFF;
+DWORD gRenderThreadId    = 0xFFFFFFFF;
 
 ENGINE_API bool IsMainThread()
 {
@@ -38,6 +39,11 @@ ENGINE_API bool IsMainThread()
 ENGINE_API bool IsSecondaryThread()
 {
     return GetCurrentThreadId() == gSecondaryThreadId;
+}
+
+ENGINE_API bool IsRenderThread()
+{
+    return GetCurrentThreadId() == gRenderThreadId;
 }
 
 ENGINE_API BOOL g_bRendering = FALSE; 
@@ -174,6 +180,7 @@ void 			mt_Thread	(void *ptr)
 
 void mt_render(void* ptr)
 {
+    gRenderThreadId = GetCurrentThreadId();
     while (true)
     {
         Device.cs_RenderEnter.lock();

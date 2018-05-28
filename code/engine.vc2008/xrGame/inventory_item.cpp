@@ -571,6 +571,7 @@ void CInventoryItem::activate_physic_shell()
 
 void CInventoryItem::UpdateXForm	()
 {
+    VERIFY(IsRenderThread());
 	if (!object().H_Parent())	return;
 
 	// Get access to entity and its visual

@@ -308,6 +308,8 @@ void CArtefact::MoveTo(Fvector const &  position)
 #include "Entity_alive.h"
 void CArtefact::UpdateXForm()
 {
+    VERIFY(IsRenderThread());
+
 	if (Device.dwFrame!=dwXF_Frame)
 	{
 		dwXF_Frame			= Device.dwFrame;

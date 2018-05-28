@@ -123,6 +123,7 @@ void CWeapon::UpdateXForm	()
 	if (Device.dwFrame == dwXF_Frame)
 		return;
 
+    VERIFY(IsRenderThread());
 	dwXF_Frame				= Device.dwFrame;
 
 	if (!H_Parent())

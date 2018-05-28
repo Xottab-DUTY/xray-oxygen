@@ -365,6 +365,7 @@ void CMissile::UpdateXForm	()
 {
 	if (Device.dwFrame!=dwXF_Frame)
 	{
+        VERIFY(IsRenderThread());
 		dwXF_Frame			= Device.dwFrame;
 
 		if (0==H_Parent())	return;
