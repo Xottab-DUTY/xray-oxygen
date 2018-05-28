@@ -76,6 +76,9 @@
     <Filter Include="OS">
       <UniqueIdentifier>{1a002462-09b5-4139-923f-2f2083af69de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Threads">
+      <UniqueIdentifier>{4648ad28-6771-4ca8-a387-a7c5a8b2bad9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FTimer.cpp">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="Buildcpp.cpp">
       <Filter>Kernel</Filter>
+    </ClCompile>
+    <ClCompile Include="xrThreadUtils.cpp">
+      <Filter>Threads</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -520,6 +526,9 @@
     </ClInclude>
     <ClInclude Include="PostprocessAnimator.h">
       <Filter>PostProcessCore</Filter>
+    </ClInclude>
+    <ClInclude Include="xrThreadUtils.h">
+      <Filter>Threads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
