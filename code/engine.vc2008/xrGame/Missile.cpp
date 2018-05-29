@@ -178,6 +178,7 @@ void CMissile::OnH_A_Chield()
 
 void CMissile::OnH_B_Independent(bool just_before_destroy) 
 {
+    SheduleUpdateXForm();
 	inherited::OnH_B_Independent(just_before_destroy);
 
 	if (!just_before_destroy) 

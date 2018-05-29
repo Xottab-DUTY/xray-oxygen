@@ -54,7 +54,7 @@ void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)
 void CHudItem::renderable_Render()
 {
     VERIFY(IsRenderThread());
-	UpdateXForm					();
+	//UpdateXForm					();
 	BOOL _hud_render			= ::Render->get_HUD() && GetHUDmode();
 	
 	if(!(_hud_render  && !IsHidden()))
@@ -239,7 +239,6 @@ void CHudItem::OnH_B_Chield		()
 void CHudItem::OnH_B_Independent	(bool just_before_destroy)
 {
 	m_sounds.StopAllSounds	();
-	UpdateXForm				();
 	
 	// next code was commented 
 	/*
