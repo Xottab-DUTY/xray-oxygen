@@ -53,6 +53,7 @@ void CHudItem::PlaySound(LPCSTR alias, const Fvector& position)
 
 void CHudItem::renderable_Render()
 {
+    VERIFY(IsRenderThread());
 	UpdateXForm					();
 	BOOL _hud_render			= ::Render->get_HUD() && GetHUDmode();
 	

@@ -177,11 +177,15 @@ public:
 
 	virtual bool 				IsNecessaryItem	    (CInventoryItem* item);
 	virtual bool				IsNecessaryItem	    (const shared_str& item_sect){return false;};
+
+            void                SheduleUpdateXForm  ();
 protected:	
 	u32							m_cost;
 	float						m_weight;
 	float						m_fCondition;
 	shared_str					m_Description;
+
+    LONG                        m_UpdateXFormsSheduled;
 protected:
 	ALife::_TIME_ID				m_dwItemIndependencyTime;
 
@@ -213,7 +217,9 @@ public:
 
 
 	virtual void				UpdateXForm	();
-			
+    //For polymorphic invoking of UpdateXForm in CInventoryItem ancestor branch
+    virtual void                InvokeUpdateXForm();
+
 protected:
 	net_updateInvData*				m_net_updateData;
 	net_updateInvData*				NetSync						();

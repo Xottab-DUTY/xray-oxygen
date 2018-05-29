@@ -164,6 +164,7 @@ IC	const typename CProblemSolverAbstract::CState &CProblemSolverAbstract::target
 TEMPLATE_SPECIALIZATION
 IC	void CProblemSolverAbstract::add_evaluator				(const _condition_type &condition_id, _condition_evaluator_ptr evaluator)
 {
+    VERIFY(IsMainThread());
 	THROW						(evaluators().end() == evaluators().find(condition_id));
 	m_evaluators.insert			(std::make_pair(condition_id,evaluator));
 }
@@ -171,6 +172,7 @@ IC	void CProblemSolverAbstract::add_evaluator				(const _condition_type &conditi
 TEMPLATE_SPECIALIZATION
 IC	void CProblemSolverAbstract::remove_evaluator			(const _condition_type &condition_id)
 {
+    VERIFY(IsMainThread());
 	EVALUATORS::iterator		I = m_evaluators.find(condition_id);
 	THROW						(I != m_evaluators.end());
 	try {

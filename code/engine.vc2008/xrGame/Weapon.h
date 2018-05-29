@@ -84,6 +84,7 @@ public:
 	virtual void			OnActiveItem		();
 	virtual void			OnHiddenItem		();
 	virtual void			SendHiddenItem		();	//same as OnHiddenItem but for client... (sends message to a server)...
+    virtual void            UpdateCLRender      () override;
 
 public:
 	virtual bool			can_kill			() const;
@@ -307,14 +308,14 @@ protected:
 
 	virtual void			LoadFireParams		(LPCSTR section);
 public:	
-	IC		const Fvector&	get_LastFP				()			{ UpdateFireDependencies(); return m_current_firedeps.vLastFP;	}
-	IC		const Fvector&	get_LastFP2				()			{ UpdateFireDependencies(); return m_current_firedeps.vLastFP2;	}
-	IC		const Fvector&	get_LastFD				()			{ UpdateFireDependencies(); return m_current_firedeps.vLastFD;	}
-	IC		const Fvector&	get_LastSP				()			{ UpdateFireDependencies(); return m_current_firedeps.vLastSP;	}
+	IC		const Fvector&	get_LastFP				()			{ return m_current_firedeps.vLastFP;	}
+	IC		const Fvector&	get_LastFP2				()			{ return m_current_firedeps.vLastFP2;	}
+	IC		const Fvector&	get_LastFD				()			{ return m_current_firedeps.vLastFD;	}
+	IC		const Fvector&	get_LastSP				()			{ return m_current_firedeps.vLastSP;	}
 
 	virtual const Fvector&	get_CurrentFirePoint	()			{ return get_LastFP();				}
 	virtual const Fvector&	get_CurrentFirePoint2	()			{ return get_LastFP2();				}
-	virtual const Fmatrix&	get_ParticlesXFORM		()			{ UpdateFireDependencies(); return m_current_firedeps.m_FireParticlesXForm;	}
+	virtual const Fmatrix&	get_ParticlesXFORM		()			{ return m_current_firedeps.m_FireParticlesXForm;	}
 	virtual void			ForceUpdateFireParticles();
 	virtual void			debug_draw_firedeps		();
 

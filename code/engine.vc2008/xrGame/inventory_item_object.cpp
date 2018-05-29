@@ -26,6 +26,15 @@ DLL_Pure *CInventoryItemObject::_construct	()
 	return						(this);
 }
 
+void CInventoryItemObject::UpdateCLRender()
+{
+    CPhysicsShellHolder::UpdateCLRender();
+    if (InterlockedCompareExchange(&m_UpdateXFormsSheduled, FALSE, TRUE))
+    {
+        InvokeUpdateXForm();
+    }
+}
+
 void CInventoryItemObject::Load				(LPCSTR section) 
 {
 	CPhysicItem::Load			(section);

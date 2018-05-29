@@ -144,6 +144,7 @@ void CParticlesObject::shedule_Update	(u32 _dt)
 
 	// Update
 	if (m_bDead)					return;
+#if 0
 	u32 dt							= Device.dwTimeGlobal - dwLastTime;
 	if (dt)							{
 		if (0){//.psDeviceFlags.test(mtParticles))	{    //. AlexMX comment this line// NO UNCOMMENT - DON'T WORK PROPERLY
@@ -157,6 +158,7 @@ void CParticlesObject::shedule_Update	(u32 _dt)
 		}
 		dwLastTime					= Device.dwTimeGlobal;
 	}
+#endif
 	UpdateSpatial					();
 }
 

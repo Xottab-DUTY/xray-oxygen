@@ -55,6 +55,7 @@ void CRender::Calculate		()
 	Lights.Update();
 
 	// Check if we touch some light even trough portal
+    VERIFY(IsRenderThread());
 	lstRenderables.clear();
 	g_SpatialSpace->q_sphere(lstRenderables,0,STYPE_LIGHTSOURCE,Device.vCameraPosition,EPS_L);
 	for (u32 _it=0; _it<lstRenderables.size(); _it++)	{

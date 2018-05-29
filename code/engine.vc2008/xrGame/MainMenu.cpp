@@ -126,14 +126,14 @@ void CMainMenu::Activate(bool bActivate)
 		if (!ReloadUI())				return;
 
 		m_Flags.set(flRestoreConsole, Console->bVisible);
-		m_Flags.set(flRestorePause, Device.Paused());
+		//m_Flags.set(flRestorePause, Device.Paused());
 
 		Console->Hide();
 
 		m_Flags.set(flRestorePauseStr, bShowPauseString);
 		bShowPauseString = FALSE;
-		if (!m_Flags.test(flRestorePause))
-			Device.Pause(TRUE, TRUE, FALSE, "mm_activate2");
+// 		if (!m_Flags.test(flRestorePause))
+// 			Device.Pause(TRUE, TRUE, FALSE, "mm_activate2");
 
 		if (g_pGameLevel)
 		{
@@ -377,6 +377,11 @@ void CMainMenu::OnFrame()
 		if (m_Flags.test(flRestoreConsole))
 			Console->Show();
 	}
+#else
+    if (m_Flags.test(flGameSaveScreenshot) && Device.dwFrame > m_screenshotFrame)
+    {
+        m_Flags.set(flGameSaveScreenshot, FALSE);
+    }
 #endif
 
 	if (IsActive())

@@ -125,7 +125,7 @@ void CEnvironment::OnDeviceCreate()
 
 
 	Invalidate	();
-	OnFrame		();
+	//OnFrame		();
 }
 
 void CEnvironment::OnDeviceDestroy()

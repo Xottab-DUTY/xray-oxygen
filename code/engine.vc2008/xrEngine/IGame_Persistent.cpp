@@ -177,10 +177,6 @@ void IGame_Persistent::OnFrame		()
 {
 #ifndef _EDITOR
 
-	if(!Device.Paused() || Device.dwPrecacheFrame)
-		Environment().OnFrame	();
-
-
 	Device.Statistic->Particles_starting= (u32)ps_needtoplay.size	();
 	Device.Statistic->Particles_active	= (u32)ps_active.size		();
 	Device.Statistic->Particles_destroy	= (u32)ps_destroy.size		();

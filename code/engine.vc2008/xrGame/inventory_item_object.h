@@ -19,6 +19,7 @@ public:
 							CInventoryItemObject	();
 	virtual					~CInventoryItemObject	();
 	virtual DLL_Pure		*_construct				();
+    virtual void UpdateCLRender() override;
 
 public:
 	virtual CPhysicsShellHolder*cast_physics_shell_holder	()	{return this;}

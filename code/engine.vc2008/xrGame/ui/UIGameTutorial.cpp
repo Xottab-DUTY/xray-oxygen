@@ -300,11 +300,17 @@ void CUISequencer::OnFrame()
 
 void CUISequencer::OnRender	()
 {
+    VERIFY(IsRenderThread());
+
 	if (m_UIWindow->IsShown())	
 		m_UIWindow->Draw();
 
-	VERIFY(m_sequencer_items.size());
-	m_sequencer_items.front()->OnRender	();
+    m_sequencer_itemsGuard.Enter();
+    if (!m_sequencer_items.empty())
+    {
+	    m_sequencer_items.front()->OnRender	();
+    }
+    m_sequencer_itemsGuard.Leave();
 }
 
 void CUISequencer::Next		()
@@ -314,8 +320,10 @@ void CUISequencer::Next		()
 	if	(!can_stop)				
 		return;
 
+    m_sequencer_itemsGuard.Enter();
 	m_sequencer_items.pop_front	();
 	delete_data					(pCurrItem);
+    m_sequencer_itemsGuard.Leave();
 
 	if(m_sequencer_items.size())
 	{
@@ -327,6 +335,7 @@ void CUISequencer::Next		()
 
 bool CUISequencer::GrabInput()
 {
+    VERIFY(IsMainThread());
 	if(m_sequencer_items.size())
 		return m_sequencer_items.front()->GrabInput();
 	else
@@ -336,6 +345,7 @@ bool CUISequencer::GrabInput()
 
 void CUISequencer::IR_OnMousePress		(int btn)
 {
+    VERIFY(IsMainThread());
 	if(m_sequencer_items.size())	
 		m_sequencer_items.front()->OnMousePress	(btn);
 
@@ -389,6 +399,7 @@ void CUISequencer::IR_OnMouseWheel		(int direction)
 
 void CUISequencer::IR_OnKeyboardPress	(int dik)
 {
+    VERIFY(IsMainThread());
 	if(m_sequencer_items.size())	
 		m_sequencer_items.front()->OnKeyboardPress			(dik);
 	

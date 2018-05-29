@@ -830,6 +830,12 @@ void CWeapon::SendHiddenItem()
 }
 
 
+void CWeapon::UpdateCLRender()
+{
+    UpdateFireDependencies();
+    CInventoryItemObject::UpdateCLRender();
+}
+
 void CWeapon::OnH_B_Chield		()
 {
 	m_dwWeaponIndependencyTime = 0;

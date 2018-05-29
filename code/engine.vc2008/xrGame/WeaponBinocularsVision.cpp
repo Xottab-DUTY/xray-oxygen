@@ -173,6 +173,7 @@ CBinocularsVision::~CBinocularsVision()
 
 void CBinocularsVision::Update()
 {
+    xrCriticalSectionGuard guard(&m_updateCS);
 	//-----------------------------------------------------
 	const CActor* pActor = Actor();
 
@@ -235,6 +236,7 @@ void CBinocularsVision::Update()
 
 void CBinocularsVision::Draw()
 {
+    xrCriticalSectionGuard guard(&m_updateCS);
 	for(SBinocVisibleObj* it : m_active_objects)
 		it->Draw();
 }
@@ -249,6 +251,7 @@ void CBinocularsVision::Load(const shared_str& section)
 
 void CBinocularsVision::remove_links(CObject *object)
 {
+    xrCriticalSectionGuard guard(&m_updateCS);
 	VIS_OBJECTS::iterator	I = std::find_if(m_active_objects.begin(),m_active_objects.end(),FindVisObjByObject(object));
 	if (I == m_active_objects.end())
 		return;

@@ -687,6 +687,7 @@ void	R_dsgraph_structure::r_dsgraph_render_subspace	(IRender_Sector* _sector, CF
 	{
 		set_Object						(0);
 
+        VERIFY(IsRenderThread());
 		// Traverse object database
 		g_SpatialSpace->q_frustum
 			(

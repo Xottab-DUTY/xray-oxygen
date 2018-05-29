@@ -39,6 +39,7 @@ public:
 	void	remove_links		(CObject *object);
 
 protected :
+    xrCriticalSection           m_updateCS;
 	Fcolor						m_frame_color;
 	float						m_rotating_speed;
 	void	Load				(const shared_str& section);

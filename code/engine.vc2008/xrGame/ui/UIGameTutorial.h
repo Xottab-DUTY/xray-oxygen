@@ -13,6 +13,7 @@ protected:
 	CUIWindow*				m_UIWindow;
 	ref_sound				m_global_sound;
 	xr_deque<CUISequenceItem*> m_sequencer_items;
+    xrCriticalSection          m_sequencer_itemsGuard;
 
 	bool					GrabInput			();
 	CUISequenceItem*		GetNextItem			();

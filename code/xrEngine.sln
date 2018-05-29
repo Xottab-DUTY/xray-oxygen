@@ -19,7 +19,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrGame", "engine.vc2008\xrGame\xrGame.vcxproj", "{200652A6-043E-4634-8837-87983B3BD5E0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{471C6E53-3038-4AB2-B913-6DE27C79DD16} = {471C6E53-3038-4AB2-B913-6DE27C79DD16}
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2} = {57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrNetServer", "engine.vc2008\xrNetServer\xrNetServer.vcxproj", "{435BAC9A-B225-457D-AB40-C9BD0CC8838C}"
@@ -28,13 +27,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrNetServer", "engine.vc200
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrParticles", "engine.vc2008\xrParticles\xrParticles.vcxproj", "{94A1C366-3D19-48E6-8170-4ADC2E70DF97}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrRender_R1", "engine.vc2008\xrRender\xrRenderPC_R1\xrRender_R1.vcxproj", "{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{35448F1E-E96F-40A2-8F46-6FB1D8DFF1F1} = {35448F1E-E96F-40A2-8F46-6FB1D8DFF1F1}
-		{722D40C3-FE5A-4A9B-94A5-5DC23A7C7AE1} = {722D40C3-FE5A-4A9B-94A5-5DC23A7C7AE1}
-		{65CBB9D0-FBC6-41A4-8316-F5E9B5D7FB33} = {65CBB9D0-FBC6-41A4-8316-F5E9B5D7FB33}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrRender_R2", "engine.vc2008\xrRender\xrRenderPC_R2\xrRender_R2.vcxproj", "{963BA4E5-499A-454D-B002-1D5ECE0527A6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -78,7 +70,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrRender_R4", "engine.vc200
 		{65CBB9D0-FBC6-41A4-8316-F5E9B5D7FB33} = {65CBB9D0-FBC6-41A4-8316-F5E9B5D7FB33}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libogg_static", "SDK\sources\libogg-1.3.2\libogg_static.vcxproj", "{15CBFEFF-7965-41F5-B4E2-21E8795C9159}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sound_static", "SDK\sources\libogg-1.3.2\libogg_static.vcxproj", "{15CBFEFF-7965-41F5-B4E2-21E8795C9159}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ode", "3rd-party\ode\default.vcxproj", "{1BF75FEB-87DD-486C-880B-227987D191C2}"
 EndProject
@@ -167,14 +159,6 @@ Global
 		{94A1C366-3D19-48E6-8170-4ADC2E70DF97}.Release_AI32|x64.Build.0 = Release_AI32|x64
 		{94A1C366-3D19-48E6-8170-4ADC2E70DF97}.Release|x64.ActiveCfg = Release|x64
 		{94A1C366-3D19-48E6-8170-4ADC2E70DF97}.Release|x64.Build.0 = Release|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Debug|x64.ActiveCfg = Debug|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Debug|x64.Build.0 = Debug|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Mixed|x64.ActiveCfg = Release|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Mixed|x64.Build.0 = Release|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Release_AI32|x64.ActiveCfg = Release_AI32|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Release_AI32|x64.Build.0 = Release_AI32|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Release|x64.ActiveCfg = Release|x64
-		{57A498C9-A741-4DDF-8EFC-BFB9EB6B00E2}.Release|x64.Build.0 = Release|x64
 		{963BA4E5-499A-454D-B002-1D5ECE0527A6}.Debug|x64.ActiveCfg = Debug|x64
 		{963BA4E5-499A-454D-B002-1D5ECE0527A6}.Debug|x64.Build.0 = Debug|x64
 		{963BA4E5-499A-454D-B002-1D5ECE0527A6}.Mixed|x64.ActiveCfg = Release|x64

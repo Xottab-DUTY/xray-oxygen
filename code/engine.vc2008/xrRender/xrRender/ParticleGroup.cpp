@@ -457,6 +457,7 @@ CParticleGroup::~CParticleGroup()
 
 void CParticleGroup::OnFrame(u32 u_dt)
 {
+    VERIFY(IsRenderThread());
 	if (m_Def&&m_RT_Flags.is(flRT_Playing)){
         float ct	= m_CurrentTime;
         float f_dt	= float(u_dt)/1000.f;

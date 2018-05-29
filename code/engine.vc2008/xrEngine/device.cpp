@@ -216,6 +216,11 @@ void mt_render(void* ptr)
                 Device.mProject_saved = Device.mProject;
 
                 //BEGIN RENDER THREAD SEQUENCE
+                if (!Device.Paused() || Device.dwPrecacheFrame)
+                {
+                    g_pGamePersistent->Environment().OnFrame();
+                }
+
                 Device.seqRender.Process(rp_Render);
 
                 Device.End();
@@ -516,9 +521,8 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 
 	if (g_bBenchmark)	return;
 
-
 #ifdef DEBUG
-//	Msg("pause [%s] timer=[%s] sound=[%s] reason=%s",bOn?"ON":"OFF", bTimer?"ON":"OFF", bSound?"ON":"OFF", reason);
+	Msg("pause [%s] timer=[%s] sound=[%s] reason=%s",bOn?"ON":"OFF", bTimer?"ON":"OFF", bSound?"ON":"OFF", reason);
 #endif // DEBUG
 
 #ifndef DEDICATED_SERVER	
@@ -530,32 +534,25 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 #ifdef INGAME_EDITOR
 				editor() ? FALSE : 
 #endif // #ifdef INGAME_EDITOR
-#ifdef DEBUG
-				!xr_strcmp(reason, "li_pause_key_no_clip")?	FALSE:
-#endif // DEBUG
 				TRUE;
 
 		if( bTimer && (!g_pGamePersistent || g_pGamePersistent->CanBePaused()) )
 		{
 			g_pauseMngr.Pause				(TRUE);
-#ifdef DEBUG
-			if(!xr_strcmp(reason, "li_pause_key_no_clip"))
-				TimerGlobal.Pause				(FALSE);
-#endif // DEBUG
+            Msg("PAUSED!");
 		}
 	
 		if (bSound && ::Sound) {
-			snd_emitters_ =					::Sound->pause_emitters(true);
-#ifdef DEBUG
-//			Log("snd_emitters_[true]",snd_emitters_);
-#endif // DEBUG
+			snd_emitters_ = ::Sound->pause_emitters(true);
 		}
-	}else
+	}
+    else
 	{
-		if( bTimer && /*g_pGamePersistent->CanBePaused() &&*/ g_pauseMngr.Paused() )
+		if( bTimer && g_pauseMngr.Paused() )
 		{
 			fTimeDelta						= EPS_S + EPS_S;
 			g_pauseMngr.Pause				(FALSE);
+            Msg("UNPAUSE!");
 		}
 		
 		if(bSound)
@@ -563,13 +560,6 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 			if(snd_emitters_>0) //avoid crash
 			{
 				snd_emitters_ =				::Sound->pause_emitters(false);
-#ifdef DEBUG
-//				Log("snd_emitters_[false]",snd_emitters_);
-#endif // DEBUG
-			}else {
-#ifdef DEBUG
-				Log("Sound->pause_emitters underflow");
-#endif // DEBUG
 			}
 		}
 	}
