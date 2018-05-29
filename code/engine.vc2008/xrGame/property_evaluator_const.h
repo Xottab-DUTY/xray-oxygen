@@ -14,13 +14,14 @@ template <typename _object_type>
 class CPropertyEvaluatorConst : public CPropertyEvaluator<_object_type> {
 protected:
 	typedef CPropertyEvaluator<_object_type>		inherited;
+    using vl_type = inherited::_value_type;
 
 protected:
-	_value_type			m_value;
+    vl_type			m_value;
 
 public:
-	IC					CPropertyEvaluatorConst	(_value_type value, LPCSTR evaluator_name = "");
-	virtual _value_type	evaluate				();
+	IC					CPropertyEvaluatorConst	(vl_type value, LPCSTR evaluator_name = "");
+	virtual vl_type	evaluate				();
 };
 
 

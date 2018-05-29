@@ -15,7 +15,7 @@
 #define CEvaluator	CPropertyEvaluatorConst<_object_type>
 
 TEMPLATE_SPECIALIZATION
-IC	CEvaluator::CPropertyEvaluatorConst	(_value_type value, LPCSTR evaluator_name) :
+IC	CEvaluator::CPropertyEvaluatorConst	(vl_type value, LPCSTR evaluator_name) :
 	m_value			(value)
 {
 #ifdef LOG_ACTION
@@ -24,7 +24,7 @@ IC	CEvaluator::CPropertyEvaluatorConst	(_value_type value, LPCSTR evaluator_name
 }
 
 TEMPLATE_SPECIALIZATION
-typename CEvaluator::_value_type CEvaluator::evaluate	()
+typename CEvaluator::vl_type CEvaluator::evaluate()
 {
 	return			(m_value);
 }
