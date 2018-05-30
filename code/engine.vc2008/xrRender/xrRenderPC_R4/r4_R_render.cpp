@@ -95,6 +95,11 @@ void CRender::render_main	(Fmatrix&	m_ViewProjection, bool _fportals)
 			if (spatial->spatial.type & STYPE_LIGHTSOURCE)		{
 				// lightsource
 				light*			L				= (light*)	(spatial->dcast_Light());
+                //#GIPERION: Figure out WTF!
+                if (L == nullptr)
+                {
+                    continue;
+                }
 				VERIFY							(L);
 				float	lod		= L->get_LOD	();
 				if (lod>EPS_L)	{

@@ -71,6 +71,7 @@ public:
 	u32									dbg_update_cl;
 	u32									dwFrame_UpdateCL;
 	u32									dwFrame_AsCrow;
+    u32                                 dwFrame_UpdateCLRender;
 
 	// Crow-MODE
     ICF	void							DBGGetProps			(ObjectProperties &p ) const { p = Props; }

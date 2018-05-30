@@ -30,6 +30,7 @@ CParticlesPlayer::SParticlesInfo* CParticlesPlayer::SBoneInfo::AppendParticles(C
 	particles.push_back	(SParticlesInfo());
 	pi					= &particles.back();
 	pi->ps				= CParticlesObject::Create(*ps_name,FALSE);
+    VERIFY(pi->ps);
 	return pi;
 }
 

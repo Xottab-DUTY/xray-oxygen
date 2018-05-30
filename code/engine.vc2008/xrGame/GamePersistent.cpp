@@ -504,6 +504,7 @@ void CGamePersistent::OnFrame	()
 	if(!g_pGameLevel)			return;
 	if(!g_pGameLevel->bReady)	return;
 
+#if 0
 	if(Device.Paused())
 	{
 #ifndef MASTER_GOLD
@@ -575,6 +576,7 @@ void CGamePersistent::OnFrame	()
 		}
 #endif // MASTER_GOLD
 	}
+#endif
 	MySuper::OnFrame			();
 
 	if(!Device.Paused())

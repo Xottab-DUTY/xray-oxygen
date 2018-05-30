@@ -129,6 +129,8 @@ void	CObjectList::SingleUpdate	(CObject* O)
 void CObjectList::SingleUpdateRender(CObject* O)
 {
     if (!O->processing_enabled()) return;
+    if (O->dwFrame_UpdateCLRender == Device.dwFrame) return;
+    O->dwFrame_UpdateCLRender = Device.dwFrame;
 
     if (O->H_Parent())
     {

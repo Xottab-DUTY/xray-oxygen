@@ -165,13 +165,20 @@ void CParticlesObject::shedule_Update	(u32 _dt)
 void CParticlesObject::PerformAllTheWork(u32 _dt)
 {
 	// Update
-	u32 dt							= Device.dwTimeGlobal - dwLastTime;
-	if (dt)							{
-		IParticleCustom* V		= imdexlib::fast_dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
-		V->OnFrame				(dt);
-		dwLastTime				= Device.dwTimeGlobal;
-	}
-	UpdateSpatial					();
+    //#GIPERION: Rewrite this method
+    if (IsRenderThread())
+    {
+        u32 dt = Device.dwTimeGlobal - dwLastTime;
+        if (dt) {
+            IParticleCustom* V = imdexlib::fast_dynamic_cast<IParticleCustom*>(renderable.visual); VERIFY(V);
+            V->OnFrame(dt);
+            dwLastTime = Device.dwTimeGlobal;
+        }
+    }
+    else
+    {
+	    UpdateSpatial					();
+    }
 }
 
 void CParticlesObject::PerformAllTheWork_mt()

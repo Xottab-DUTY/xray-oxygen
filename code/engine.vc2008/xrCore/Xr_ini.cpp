@@ -375,6 +375,7 @@ BOOL CInifile::section_exist(LPCSTR S) const {
 }
 
 BOOL CInifile::line_exist(LPCSTR S, LPCSTR L) const {
+    if (L == nullptr) return FALSE;
     if (!section_exist(S))
         return FALSE;
     Sect& I = r_section(S);

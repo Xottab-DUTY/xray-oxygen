@@ -293,6 +293,7 @@ void CCameraManager::UpdatePPEffectors()
 
 void CCameraManager::ApplyDevice(float _viewport_near)
 {
+    VERIFY(IsRenderThread());
     // Device params
     Device.mView.build_camera_dir(m_cam_info.p, m_cam_info.d, m_cam_info.n);
 

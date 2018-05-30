@@ -768,8 +768,6 @@ void CActor::UpdateCL	()
 	SetZoomAimingMode		(false);
 	CWeapon* pWeapon		= smart_cast<CWeapon*>(inventory().ActiveItem());	
 
-	cam_Update(float(Device.dwTimeDelta)/1000.0f, currentFOV());
-
 	if(Level().CurrentEntity() && this->ID()==Level().CurrentEntity()->ID() )
 	{
 		psHUD_Flags.set( HUD_CROSSHAIR_RT2, true );
@@ -886,6 +884,7 @@ void CActor::UpdateCL	()
 void CActor::UpdateCLRender()
 {
     m_pPhysics_support->in_UpdateCL();
+    cam_Update(float(Device.dwTimeDelta) / 1000.0f, currentFOV());
 }
 
 float	NET_Jump = 0;

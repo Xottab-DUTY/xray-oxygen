@@ -93,6 +93,7 @@ public:
 	dxRender_Visual*				m_lod;
 protected:
 	SkeletonWMVec				wallmarks;
+    xrCriticalSection           wallmarksGuard;
 	u32							wm_frame;
 
 	xr_vector<dxRender_Visual*>	children_invisible	;

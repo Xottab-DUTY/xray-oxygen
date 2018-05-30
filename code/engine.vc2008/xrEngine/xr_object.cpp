@@ -150,7 +150,7 @@ const	Fbox&	CObject::BoundingBox	()				const	{ VERIFY2(renderable.visual,*cName(
 //----------------------------------------------------------------------
 CObject::CObject		( )		:
 	ISpatial					(g_SpatialSpace),
-	dwFrame_AsCrow				(u32(-1))
+	dwFrame_AsCrow				(u32(-1)), dwFrame_UpdateCLRender(0)
 {
 	// Transform
 	Props.storage				= 0;
