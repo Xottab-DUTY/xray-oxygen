@@ -354,6 +354,11 @@ inline void CBackend::set_CullMode(u32 _mode)
 	StateManager.SetCullMode(_mode);
 }
 
+inline void CBackend::set_Fill(u32 _mode)
+{
+	StateManager.SetFillMode(_mode);
+}
+
 IC void CBackend::ApplyVertexLayout()
 {
 	VERIFY(vs);

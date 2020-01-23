@@ -339,6 +339,17 @@ void dx10StateManager::SetCullMode(u32 Mode)
 	}
 }
 
+void dx10StateManager::SetFillMode(u32 Mode)
+{
+	ValidateRDesc();
+
+	if ((u32)m_RDesc.FillMode != Mode)
+	{
+		m_bRSChanged = true;
+		m_RDesc.FillMode = (D3D11_FILL_MODE)Mode;
+	}
+}
+
 void dx10StateManager::SetMultisample(u32 Enable)
 {
 	ValidateRDesc();
