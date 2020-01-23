@@ -16,6 +16,7 @@
 #endif
 
 #include "../../xrCDB/cl_intersect.h"
+#include "dxRenderDeviceRender.h"
 
 xrCriticalSection	UCalc_Mutex;
 
@@ -51,7 +52,9 @@ LPCSTR CKinematics::LL_BoneName_dbg	(u16 ID)
 
 void CKinematics::DebugRender(Fmatrix& XFORM)
 {
-	CalculateBones	();
+	RCache.set_Shader(dxRenderDeviceRender::Instance().m_WireShader);
+	RCache.set_c	("tfactor", 1.f, 1.f, 1.f, 1.f);
+    CalculateBones	();
 
 	CBoneData::BoneDebug	dbgLines;
 	(*bones)[iRoot]->DebugQuery	(dbgLines);

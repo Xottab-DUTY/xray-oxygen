@@ -2,6 +2,7 @@
 
 #include "dxDebugRender.h"
 #include "dxUIShader.h"
+#include "dxRenderDeviceRender.h"
 
 dxDebugRender DebugRenderImpl;
 dxDebugRender DebugRenderImpl_1;
@@ -17,6 +18,8 @@ void dxDebugRender::Render()
 		return;
 
 	RCache.set_xform_world			(Fidentity);
+	RCache.set_Shader				(dxRenderDeviceRender::Instance().m_WireShader);
+	RCache.set_c					("tfactor", 1.f, 1.f, 1.f, 1.f);
 	RCache.dbg_Draw					(D3DPT_LINELIST,&*m_line_vertices.begin(),m_line_vertices.size(),&*m_line_indices.begin(),m_line_indices.size()/2);
 	m_line_vertices.resize			(0);
 	m_line_indices.resize			(0);

@@ -2,6 +2,7 @@
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/environment.h"
 #include "fvf.h"
+#include "dxRenderDeviceRender.h"
 
 CPortalTraverser	PortalTraverser;
 
@@ -137,6 +138,8 @@ void CPortalTraverser::dbg_draw		()
 	RCache.set_xform_world	(Fidentity);
 	RCache.set_xform_view	(Fidentity);
 	RCache.set_xform_project(Fidentity);
+	RCache.set_Shader		(dxRenderDeviceRender::Instance().m_WireShader);
+	RCache.set_c			("tfactor", 1.f, 1.f, 1.f, 1.f);
 	for (u32 s=0; s<dbg_sectors.size(); s++)	{
 		CSector*	S		= (CSector*)dbg_sectors[s];
 		FVF::L		verts	[5];

@@ -384,6 +384,13 @@ public:
 
 	CBackend()						{	Invalidate(); };
 
+private:
+	// Debug Draw
+	void InitializeDebugDraw		();
+	void DestroyDebugDraw			();
+
+	ref_geom vs_L;
+
 #ifdef USE_DX11
 private:
 	//	DirectX 10 internal functionality
